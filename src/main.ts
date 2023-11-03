@@ -1,34 +1,32 @@
-/**
- * Some predefined delay values (in milliseconds).
- */
-export enum Delays {
-  Short = 500,
-  Medium = 2000,
-  Long = 5000,
-}
+import {Telegraf, Markup} from 'telegraf';
+import 'dotenv/config'
+import {GAMES} from "./data.js";
 
-/**
- * Returns a Promise<string> that resolves after a given time.
- *
- * @param {string} name - A name.
- * @param {number=} [delay=Delays.Medium] - A number of milliseconds to delay resolution of the Promise.
- * @returns {Promise<string>}
- */
-function delayedHello(
-  name: string,
-  delay: number = Delays.Medium,
-): Promise<string> {
-  return new Promise((resolve: (value?: string) => void) =>
-    setTimeout(() => resolve(`Hello, ${name}`), delay),
-  );
-}
+const bot = new Telegraf(process.env.TOKEN);
 
-// Please see the comment in the .eslintrc.json file about the suppressed rule!
-// Below is an example of how to use ESLint errors suppression. You can read more
-// at https://eslint.org/docs/latest/user-guide/configuring/rules#disabling-rules
+bot.start(async (ctx) => {
+  await ctx.setMyCommands([{command: "show_games", description: "Show Available games"}]);
+});
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export async function greeter(name: any) { // eslint-disable-line @typescript-eslint/no-explicit-any
-  // The name parameter should be of type string. Any is used only to trigger the rule.
-  return await delayedHello(name, Delays.Long);
-}
+bot.command("show_games", async (ctx) => {
+  const gameMessage = (game: { date: string, coach: string}) => `Тренер: <b>${game.coach}</b>\nДата: <b>${game.date}</b>`;
+
+  GAMES.forEach(game => {
+    ctx.reply(gameMessage(game), {
+      parse_mode: 'HTML',
+      ...Markup.inlineKeyboard([
+        Markup.button.callback('Записаться', 'join'),
+        Markup.button.callback('Участники', 'participants')
+      ])
+    })
+  });
+})
+
+bot.launch();
+
+
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))
+
+
