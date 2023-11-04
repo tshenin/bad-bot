@@ -1,6 +1,9 @@
-import {Telegraf, Markup} from 'telegraf';
+import {Telegraf} from 'telegraf';
 import 'dotenv/config'
-import {GAMES} from "./data.js";
+import {getGames} from "./services/games.service.js";
+import {renderGameButtons} from "./markup/buttons.js";
+import {renderGameMessage, renderParticipantsMessage} from "./markup/messages.js";
+import {addParticipant, getParticipants} from "./services/participants.service.js";
 
 const bot = new Telegraf(process.env.TOKEN);
 
@@ -9,18 +12,31 @@ bot.start(async (ctx) => {
 });
 
 bot.command("show_games", async (ctx) => {
-  const gameMessage = (game: { date: string, coach: string}) => `Тренер: <b>${game.coach}</b>\nДата: <b>${game.date}</b>`;
-
-  GAMES.forEach(game => {
-    ctx.reply(gameMessage(game), {
-      parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        Markup.button.callback('Записаться', 'join'),
-        Markup.button.callback('Участники', 'participants')
-      ])
-    })
+  getGames().forEach(game => {
+    ctx.reply(renderGameMessage(game), {parse_mode: 'HTML', ...renderGameButtons(game)})
   });
 })
+
+bot.action(/join__(.+)/, (ctx) => {
+  const gameID = ctx.match[1];
+  ctx.answerCbQuery();
+  const res = addParticipant({
+    tid: ctx.from.id,
+    name: (ctx.from.first_name + " " + ctx.from.last_name) || ctx.from.username,
+    game: gameID
+  });
+  if (res) {
+    ctx.reply('Готово, вы записались на игру к такому-то тренеру, в такое-то число.\nПриходите за 15 минут до тренировки.');
+  } else {
+    ctx.reply('Вы уже записаны на эту игру');
+  }
+});
+
+bot.action(/participants__(.+)/, (ctx) => {
+  const gameID = ctx.match[1];
+  ctx.answerCbQuery();
+  ctx.reply(renderParticipantsMessage(getParticipants(gameID)));
+});
 
 bot.launch();
 
