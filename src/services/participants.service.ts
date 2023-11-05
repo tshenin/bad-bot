@@ -1,21 +1,18 @@
-import {PARTICIPANTS} from "../data.js";
-import {Participant} from "../models/participant.model.js";
+import {IParticipant, Participant, ParticipantDocument} from "../schemas/participant.schema.js";
 
-let participants = [...PARTICIPANTS];
 
-export const getParticipants = (gameId: string): Participant[] => {
-  return participants.filter(p => p.game === gameId);
+export const getParticipants = async (gameId: string): Promise<ParticipantDocument[]> => {
+  return Participant.find({game: gameId});
 }
 
-export const addParticipant = (p: Participant): boolean => {
-  if (participants.find(pa => pa.game === p.game && pa.tid === p.tid)) {
-    return false;
-  }
-  participants.push(p);
-  return true;
+export const addParticipant = async (p: IParticipant): Promise<void> => {
+  // todo добавить проверку что такой участник уже есть
+  // todo добавить очередь
+  const newParticipant = new Participant(p);
+  await newParticipant.save();
 }
 
-export const removeParticipant = (tid: string): void => {
-  participants = participants.filter(p => p.tid !== tid);
+export const removeParticipant = async (tid: string, game: string): Promise<void> => {
+  Participant.findOneAndDelete({tid, game})
 }
 
