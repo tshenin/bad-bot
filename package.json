@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@types/jest": "~29.5",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "~18",
     "@typescript-eslint/eslint-plugin": "~6.2",
     "@typescript-eslint/parser": "~6.2",
@@ -24,6 +25,7 @@
   },
   "scripts": {
     "start": "node build/src/main.js",
+    "dev": "nodemon build/src/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
@@ -38,6 +40,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "dotenv": "^16.3.1",
+    "mongose": "^0.0.2-security",
     "telegraf": "^4.15.0",
     "tslib": "~2.6"
   },

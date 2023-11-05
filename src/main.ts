@@ -4,6 +4,13 @@ import {getGames} from "./services/games.service.js";
 import {renderGameButtons} from "./markup/buttons.js";
 import {renderGameMessage, renderParticipantsMessage} from "./markup/messages.js";
 import {addParticipant, getParticipants} from "./services/participants.service.js";
+import {connect} from 'mongoose';
+
+main().catch(err => console.log('mongoose', err));
+
+async function main() {
+  await connect(`mongodb://localhost:27017/${process.env.DB_NAME}`);
+}
 
 const bot = new Telegraf(process.env.TOKEN);
 
