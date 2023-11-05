@@ -1,10 +1,12 @@
 import {Telegraf} from 'telegraf';
+import {message} from 'telegraf/filters';
 import 'dotenv/config'
-import {getGames} from "./services/games.service.js";
+import {addGame, getGames} from "./services/games.service.js";
 import {renderGameButtons} from "./markup/buttons.js";
 import {renderGameMessage, renderParticipantsMessage} from "./markup/messages.js";
 import {addParticipant, getParticipants} from "./services/participants.service.js";
 import {connect} from 'mongoose';
+import {GAMES} from "./data.js";
 
 main().catch(err => console.log('mongoose', err));
 
@@ -19,7 +21,9 @@ bot.start(async (ctx) => {
 });
 
 bot.command("show_games", async (ctx) => {
-  getGames().forEach(game => {
+  const games = await getGames();
+
+  games.forEach(game => {
     ctx.reply(renderGameMessage(game), {parse_mode: 'HTML', ...renderGameButtons(game)})
   });
 })
@@ -44,6 +48,12 @@ bot.action(/participants__(.+)/, (ctx) => {
   ctx.answerCbQuery();
   ctx.reply(renderParticipantsMessage(getParticipants(gameID)));
 });
+
+bot.on(message('text'), () => {
+  GAMES.forEach(game => {
+    addGame(game)
+  })
+})
 
 bot.launch();
 

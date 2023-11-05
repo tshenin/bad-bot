@@ -1,16 +1,19 @@
-import {Game} from "./models/game.model.js";
 import {Participant} from "./models/participant.model.js";
+import {GameLevel, GameType, IGame} from "./schemas/game.schema.js";
 
-export const GAMES: Game[] = [{
-  id: '1',
+export const GAMES: IGame[] = [{
   coach: "Саша Волосатый Волан",
-  date: "23.12.2023",
-  capacity: 10
-}, {
-  id: "2",
+  capacity: 10,
+  type: GameType.game,
+  level: GameLevel.a,
+  date: new Date()
+  },
+  {
   coach: "Тимка нуб",
-  date: "25.12.2023",
-  capacity: 5
+  capacity: 5,
+  type: GameType.training,
+  level: GameLevel.b,
+  date: new Date()
 }];
 
 export const PARTICIPANTS: Participant[] = [{

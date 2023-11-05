@@ -1,21 +1,21 @@
-import {GAMES} from "../data.js";
-import {Game} from "../models/game.model.js";
+import {Game, IGame} from "../schemas/game.schema.js";
 
-let games = [...GAMES];
-
-export const getGames = (): Game[] => {
-  return [...games];
+export const getGames = (): Promise<Game[]> => {
+  return Game.find();
 }
 
-export const addGame =  (game): void => {
-  games.push(game);
+export const addGame =  async (game: IGame): Promise<void> => {
+  const newGame = new Game({...game});
+  await newGame.save();
 };
 
-export const removeGame =  (id): void => {
-  games = games.filter(game => game.id !== id);
+export const removeGame =  (id: string): void => {
+  Game.findByIdAndDelete(id)
 };
 
-export const getUserGames = () => {
-  // todo
-  return games;
+export const getUserGames = (): void => {
+  // todo: make aggregation
+  // Game.findByIdAndDelete(id);
+
+  // return games;
 };
