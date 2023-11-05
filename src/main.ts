@@ -1,20 +1,29 @@
-import {Telegraf} from 'telegraf';
-import {message} from 'telegraf/filters';
 import 'dotenv/config'
-import {addGame, getGames} from "./services/games.service.js";
-import {renderGameButtons} from "./markup/buttons.js";
-import {renderGameMessage, renderParticipantsMessage} from "./markup/messages.js";
-import {addParticipant, getParticipants} from "./services/participants.service.js";
 import {connect} from 'mongoose';
+
+import {addGame, getGames} from "./services/games.service.js";
+import {renderGameMessage, renderParticipantsMessage} from "./markup/messages.js";
+import {renderGameButtons} from "./markup/buttons.js";
+import {addParticipant, getParticipants} from "./services/participants.service.js";
 import {GAMES} from "./data.js";
+import {message} from "telegraf/filters";
+import {bot} from "./services/bot.service.js";
+import {createGameSceneRun, setCreateGameSceneListener} from "./scenes/game/create-game.scene.js";
+import {Scenes, session} from "telegraf";
 
-main().catch(err => console.log('mongoose', err));
-
-async function main() {
+dbConnection().catch(err => console.log('mongoose', err));
+async function dbConnection() {
   await connect(`mongodb://localhost:27017/${process.env.DB_NAME}`);
 }
 
-const bot = new Telegraf(process.env.TOKEN);
+// set all scenes
+const stage = new Scenes.Stage<Scenes.SceneContext>([createGameSceneRun()]);
+bot.use(session());
+bot.use(stage.middleware());
+
+// set all scenes listeners
+setCreateGameSceneListener(bot);
+
 
 bot.start(async (ctx) => {
   await ctx.setMyCommands([{command: "show_games", description: "Show Available games"}]);
