@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import {Schema, model, Document} from 'mongoose';
 export interface IGame {
     date: Date;
     coach?: string;
@@ -24,7 +24,6 @@ export enum GameLevel {
     de = 'de'
 }
 
-// 2. Create a Schema corresponding to the document interface.
 const gameSchema = new Schema<IGame>({
     date: { type: Date, require: true },
     type: { type: String, enum: GameType, require: true },
@@ -33,5 +32,6 @@ const gameSchema = new Schema<IGame>({
     coach: String,
 });
 
-// 3. Create a Model.
 export const Game = model<IGame>('Game', gameSchema);
+
+export type GameDocument = IGame & Document;

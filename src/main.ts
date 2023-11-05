@@ -49,10 +49,12 @@ bot.action(/participants__(.+)/, (ctx) => {
   ctx.reply(renderParticipantsMessage(getParticipants(gameID)));
 });
 
-bot.on(message('text'), () => {
-  GAMES.forEach(game => {
-    addGame(game)
-  })
+bot.on(message('text'), async (ctx) => {
+  if (ctx.message.text === "mock games") {
+    GAMES.forEach(game => {
+      addGame(game)
+    })
+  }
 })
 
 bot.launch();

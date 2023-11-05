@@ -1,7 +1,7 @@
-import {Game, IGame} from "../schemas/game.schema.js";
+import {Game, GameDocument, IGame} from "../schemas/game.schema.js";
 
-export const getGames = (): Promise<Game[]> => {
-  return Game.find();
+export const getGames = async (): Promise<GameDocument[]> => {
+  return Game.find({});
 }
 
 export const addGame =  async (game: IGame): Promise<void> => {
@@ -13,9 +13,4 @@ export const removeGame =  (id: string): void => {
   Game.findByIdAndDelete(id)
 };
 
-export const getUserGames = (): void => {
-  // todo: make aggregation
-  // Game.findByIdAndDelete(id);
-
-  // return games;
-};
+export const getUserGames = (): void => {};

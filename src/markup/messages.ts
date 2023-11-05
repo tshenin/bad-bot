@@ -1,7 +1,7 @@
-import {Game} from "../models/game.model.js";
 import {Participant} from "../models/participant.model.js";
+import {GameDocument} from "../schemas/game.schema.js";
 
-export const renderGameMessage = (game: Game): string => {
+export const renderGameMessage = (game: GameDocument): string => {
   return `Тренер: <b>${game.coach}</b>\nДата: <b>${game.date}</b>\nУчастников: <b>9/10</b>`;
 }
 
