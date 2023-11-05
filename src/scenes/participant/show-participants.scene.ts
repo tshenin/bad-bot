@@ -2,7 +2,7 @@ import {Scenes, Telegraf} from "telegraf";
 import {getParticipants} from "../../services/participants.service.js";
 import {renderParticipantsMessage} from "../../markup/messages.js";
 
-export const showParticipantsSceneRun = (): Scenes.BaseScene => {
+export const showParticipantsSceneRun = () => {
   const showParticipantsScene = new Scenes.BaseScene<Scenes.SceneContext>("show_participants");
 
   // todo показать кнопку join game

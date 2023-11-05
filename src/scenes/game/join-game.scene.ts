@@ -1,7 +1,7 @@
 import {Scenes, Telegraf} from "telegraf";
 import {addParticipant} from "../../services/participants.service.js";
 
-export const joinGameSceneRun = (): Scenes.BaseScene => {
+export const joinGameSceneRun = () => {
   const joinGameScene = new Scenes.BaseScene<Scenes.SceneContext>("join_game");
 
   // todo чекнуть про WizardScene
