@@ -1,9 +1,7 @@
 import 'dotenv/config';
 import { connect } from 'mongoose';
 
-import { addGame, getGames } from './services/games.service.js';
-import { renderGameMessage } from './markup/messages.js';
-import { renderGameButtons } from './markup/buttons.js';
+import { addGame } from './services/games.service.js';
 import { bot } from './services/bot.service.js';
 import {
   createGameSceneRun,
@@ -20,6 +18,10 @@ import {
 } from './scenes/participant/show-participants.scene.js';
 import { message } from 'telegraf/filters';
 import { GAMES } from './data.js';
+import {
+  setShowGamesSceneListener,
+  showGamesSceneRun,
+} from './scenes/game/show-games.scene.js';
 
 dbConnection().catch((err) => console.log('mongoose', err));
 
@@ -32,6 +34,7 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([
   createGameSceneRun(),
   joinGameSceneRun(),
   showParticipantsSceneRun(),
+  showGamesSceneRun(),
 ]);
 bot.use(session());
 bot.use(stage.middleware());
@@ -40,30 +43,12 @@ bot.use(stage.middleware());
 setCreateGameSceneListener(bot);
 setJoinGameSceneListener(bot);
 setShowParticipantsSceneListener(bot);
+setShowGamesSceneListener(bot);
 
 bot.start(async (ctx) => {
   await ctx.setMyCommands([
     { command: 'show_games', description: 'Показать доступные игры' },
   ]);
-});
-
-bot.command('show_games', async (ctx) => {
-  const games = await getGames();
-
-  games.forEach((game) => {
-    ctx.reply(renderGameMessage(game), {
-      parse_mode: 'HTML',
-      ...renderGameButtons(game),
-    });
-  });
-});
-
-bot.on(message('text'), async (ctx) => {
-  if (ctx.message.text === 'mock games') {
-    GAMES.forEach((game) => {
-      addGame(game);
-    });
-  }
 });
 
 bot.on(message('text'), async (ctx) => {
