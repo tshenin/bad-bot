@@ -1,18 +1,32 @@
-import {IParticipant, Participant, ParticipantDocument} from "../schemas/participant.schema.js";
+import {
+  IParticipant,
+  Participant,
+  ParticipantDocument,
+} from '../schemas/participant.schema.js';
+import { Game } from '../schemas/game.schema.js';
 
+export const getParticipants = async (
+  gameId: string,
+): Promise<ParticipantDocument[]> => {
+  return Participant.find({ game: gameId });
+};
 
-export const getParticipants = async (gameId: string): Promise<ParticipantDocument[]> => {
-  return Participant.find({game: gameId});
-}
+export const addParticipant = async (p: IParticipant): Promise<boolean> => {
+  const participant = await Participant.findOne({ tid: p.tid, game: p.game });
+  if (participant) {
+    // todo return custom error type
+    return false;
+  }
+  const newParticipant = await new Participant(p).save();
+  const game = await Game.findById(p.game);
+  game.participants.push(newParticipant.id);
+  await game.save();
+  return true;
+};
 
-export const addParticipant = async (p: IParticipant): Promise<void> => {
-  // todo добавить проверку что такой участник уже есть
-  // todo добавить очередь
-  const newParticipant = new Participant(p);
-  await newParticipant.save();
-}
-
-export const removeParticipant = async (tid: string, game: string): Promise<void> => {
-  Participant.findOneAndDelete({tid, game})
-}
-
+export const removeParticipant = async (
+  tid: string,
+  game: string,
+): Promise<void> => {
+  Participant.findOneAndDelete({ tid, game });
+};
