@@ -25,8 +25,8 @@ export const addParticipant = async (p: IParticipant): Promise<boolean> => {
 };
 
 export const removeParticipant = async (
-  tid: string,
+  tid: number,
   game: string,
 ): Promise<void> => {
-  Participant.findOneAndDelete({ tid, game });
+  await Participant.findOneAndDelete({ tid, game }).exec();
 };

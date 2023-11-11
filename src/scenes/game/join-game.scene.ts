@@ -12,6 +12,8 @@ export const joinGameSceneRun = () => {
       await ctx.reply('У вас не указана фамилия');
     } else {
       const name = `${ctx.from.first_name} ${ctx.from.last_name}`;
+
+      // todo не записывать на прошедшие игры
       const result = await addParticipant({
         tid: ctx.from.id,
         name,
@@ -24,6 +26,7 @@ export const joinGameSceneRun = () => {
         await ctx.scene.leave();
         return;
       }
+
       // todo дать еще раз время и дату
       await ctx.reply('Готово, вы записались на игру.\nНе опаздывайте.');
     }

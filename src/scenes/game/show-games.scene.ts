@@ -1,7 +1,7 @@
 import { Scenes, Telegraf } from 'telegraf';
 import { getGames } from '../../services/games.service.js';
 import { renderGameMessage } from '../../markup/messages.js';
-import { renderGameButtons } from '../../markup/buttons.js';
+import { renderJoinGameButtons } from '../../markup/buttons.js';
 
 export const showGamesSceneRun = () => {
   const showGamesScene = new Scenes.BaseScene<Scenes.SceneContext>(
@@ -13,7 +13,7 @@ export const showGamesSceneRun = () => {
     games.forEach((game) => {
       ctx.reply(renderGameMessage(game), {
         parse_mode: 'HTML',
-        ...renderGameButtons(game),
+        ...renderJoinGameButtons(game),
       });
     });
     showGamesScene.leave();

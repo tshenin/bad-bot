@@ -22,6 +22,14 @@ import {
   setShowGamesSceneListener,
   showGamesSceneRun,
 } from './scenes/game/show-games.scene.js';
+import {
+  setShowMyGamesSceneListener,
+  showMyGamesSceneRun,
+} from './scenes/game/show-my-games.scene.js';
+import {
+  leaveGameSceneRun,
+  setLeaveGameSceneListener,
+} from './scenes/game/leave-game.scene.js';
 
 dbConnection().catch((err) => console.log('mongoose', err));
 
@@ -35,6 +43,8 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([
   joinGameSceneRun(),
   showParticipantsSceneRun(),
   showGamesSceneRun(),
+  showMyGamesSceneRun(),
+  leaveGameSceneRun(),
 ]);
 bot.use(session());
 bot.use(stage.middleware());
@@ -44,10 +54,13 @@ setCreateGameSceneListener(bot);
 setJoinGameSceneListener(bot);
 setShowParticipantsSceneListener(bot);
 setShowGamesSceneListener(bot);
+setShowMyGamesSceneListener(bot);
+setLeaveGameSceneListener(bot);
 
 bot.start(async (ctx) => {
   await ctx.setMyCommands([
     { command: 'show_games', description: 'Показать доступные игры' },
+    { command: 'my_games', description: 'Показать мои игры' },
   ]);
 });
 
