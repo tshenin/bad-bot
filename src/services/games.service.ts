@@ -1,5 +1,9 @@
 import { Game, GameDocument, IGame } from '../schemas/game.schema.js';
 
+export const getGame = async (id: string): Promise<GameDocument> => {
+  return Game.findById(id).exec();
+};
+
 export const getGames = async (): Promise<GameDocument[]> => {
   return Game.find({});
 };
