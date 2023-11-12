@@ -1,16 +1,31 @@
-import {Game, GameDocument, IGame} from "../schemas/game.schema.js";
+import { Game, GameDocument, IGame } from '../schemas/game.schema.js';
+import { Participant } from '../schemas/participant.schema.js';
+
+export const getGame = async (id: string): Promise<GameDocument> => {
+  return Game.findById(id).exec();
+};
 
 export const getGames = async (): Promise<GameDocument[]> => {
-  return Game.find({});
-}
+  return Game.find({ date: { $gte: new Date() } })
+    .sort('date')
+    .exec();
+};
 
-export const addGame =  async (game: IGame): Promise<void> => {
-  const newGame = new Game({...game});
+export const addGame = async (game: IGame): Promise<void> => {
+  const newGame = new Game({ ...game });
   await newGame.save();
 };
 
-export const removeGame =  (id: string): void => {
-  Game.findByIdAndDelete(id)
+export const removeGame = (id: string): void => {
+  Game.findByIdAndDelete(id);
 };
 
-export const getUserGames = (): void => {};
+export const getUserGames = async (tid: string): Promise<GameDocument[]> => {
+  const participations = await Participant.find({ tid }).exec();
+  const games = participations.map((p) => p.game);
+  return await Game.find({ date: { $gte: new Date() } })
+    .where('_id')
+    .in(games)
+    .sort('date')
+    .exec();
+};
