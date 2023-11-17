@@ -30,7 +30,13 @@ import {
   leaveGameSceneRun,
   setLeaveGameSceneListener,
 } from './scenes/game/leave-game.scene.js';
+import {setDefaultOptions} from "date-fns";
+import ru from "date-fns/locale/ru/index.js"
 
+// set dates defaults
+setDefaultOptions({ locale: ru })
+
+// set database connection
 dbConnection().catch((err) => console.log('mongoose', err));
 
 async function dbConnection(): Promise<void> {
@@ -46,6 +52,7 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([
   showMyGamesSceneRun(),
   leaveGameSceneRun(),
 ]);
+
 bot.use(session());
 bot.use(stage.middleware());
 

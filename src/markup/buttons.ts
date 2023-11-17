@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf';
 import { GameDocument } from '../schemas/game.schema.js';
+import {add, format, startOfDay} from "date-fns";
 
 export const renderJoinGameButtons = (game: GameDocument) => {
   return {
@@ -18,3 +19,12 @@ export const renderMyGameButtons = (game: GameDocument) => {
     ]),
   };
 };
+
+export const renderNext7DaysButtons = () => {
+  const days = new Array(7).fill(startOfDay(new Date())).map((d, i) => add(d, { days: i }))
+  return {
+    ...Markup.inlineKeyboard(days.map(day => {
+      return Markup.button.callback(format(day, 'EEEEEE d.M'), `create_game_date__${format(day, 'd.M.yyyy')}`);
+    })),
+  };
+}
