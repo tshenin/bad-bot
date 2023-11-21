@@ -11,20 +11,20 @@ export interface IGame {
 }
 
 export enum GameType {
-  training = 'training',
-  game = 'game',
+  training = 'Тренировка',
+  game = 'Игра',
 }
 
 export enum GameLevel {
-  a = 'a',
-  b = 'b',
-  c = 'c',
-  d = 'd',
-  e = 'e',
-  ab = 'ab',
-  bc = 'bc',
-  cd = 'cd',
-  de = 'de',
+  a = 'A',
+  b = 'B',
+  c = 'C',
+  d = 'D',
+  e = 'E',
+  ab = 'A/B',
+  bc = 'B/C',
+  cd = 'C/D',
+  de = 'D/E',
 }
 
 const gameSchema = new Schema<IGame>({

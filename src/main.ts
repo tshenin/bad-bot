@@ -37,6 +37,8 @@ async function dbConnection(): Promise<void> {
   await connect(`mongodb://localhost:27017/${process.env.DB_NAME}`);
 }
 
+const ADMINS = ['AlexR93', 'Annet', 'tshenin'];
+
 // set all scenes
 const stage = new Scenes.Stage<Scenes.SceneContext>([
   createGameSceneRun(),
@@ -58,10 +60,19 @@ setShowMyGamesSceneListener(bot);
 setLeaveGameSceneListener(bot);
 
 bot.start(async (ctx) => {
-  await ctx.setMyCommands([
+  const commands = [
     { command: 'show_games', description: 'Показать доступные игры' },
     { command: 'my_games', description: 'Показать мои игры' },
-  ]);
+  ];
+
+  // if user is admin
+  if (ADMINS.includes(ctx.update.message.from.username)) {
+    commands.push({
+      command: 'create_game', description: 'Создать игру'
+    });
+  }
+
+  await ctx.setMyCommands(commands);
 });
 
 bot.on(message('text'), async (ctx) => {
