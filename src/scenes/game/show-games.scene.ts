@@ -1,7 +1,8 @@
 import { Scenes, Telegraf } from 'telegraf';
 import { getGames } from '../../services/games.service.js';
 import { renderGameMessage } from '../../markup/messages.js';
-import { renderJoinGameButtons } from '../../markup/buttons.js';
+import {adminButtons, renderJoinGameButtons} from '../../markup/buttons.js';
+import {isAdmin} from "../../services/utils.js";
 
 export const showGamesSceneRun = () => {
   const showGamesScene = new Scenes.BaseScene<Scenes.SceneContext>(
@@ -11,9 +12,16 @@ export const showGamesSceneRun = () => {
   showGamesScene.enter(async (ctx) => {
     const games = await getGames();
     games.forEach((game) => {
+      const buttons = renderJoinGameButtons(game);
+      const adminCommands = isAdmin ? adminButtons(game) : [];
+
+      if (isAdmin(ctx.update['message']?.from.username)) {
+        buttons.reply_markup['inline_keyboard'].push(adminCommands);
+      }
+
       ctx.reply(renderGameMessage(game), {
         parse_mode: 'HTML',
-        ...renderJoinGameButtons(game),
+        ...buttons,
       });
     });
     showGamesScene.leave();

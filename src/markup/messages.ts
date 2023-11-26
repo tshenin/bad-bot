@@ -5,6 +5,8 @@ import { format } from 'date-fns';
 export const renderGameMessage = (game: GameDocument): string => {
   let message = `Тренер: <b>${game.coach}</b>\n`;
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b>\n`;
+  message += `Тип: <b>${game.type}</b>\n`;
+  message += `уровень: <b>${game.level}</b>\n`;
   message += `Участников: <b>${game.participants?.length}/${game.capacity}</b>`;
   return message;
 };

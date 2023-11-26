@@ -2,7 +2,7 @@ import { Game, GameDocument, IGame } from '../schemas/game.schema.js';
 import { Participant } from '../schemas/participant.schema.js';
 
 export const getGame = async (id: string): Promise<GameDocument> => {
-  return Game.findById(id).exec();
+  return Game.findById(id.trim()).exec();
 };
 
 export const getGames = async (): Promise<GameDocument[]> => {
@@ -16,8 +16,8 @@ export const addGame = async (game: IGame): Promise<void> => {
   await newGame.save();
 };
 
-export const removeGame = (id: string): void => {
-  Game.findByIdAndDelete(id);
+export const removeGame = (id: string): Promise<GameDocument> => {
+  return Game.findByIdAndDelete(id.trim()).exec();
 };
 
 export const getUserGames = async (tid: string): Promise<GameDocument[]> => {

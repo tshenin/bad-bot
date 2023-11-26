@@ -4,7 +4,8 @@ import {
   renderDateButtons,
   renderGameLevelButtons,
   renderGameTypeButtons,
-  renderTimeButtons, successCancelButtons
+  renderTimeButtons,
+  renderYesNoButtons,
 } from "../../markup/buttons.js";
 import {GameLevel, GameType} from "../../schemas/game.schema.js";
 import {addGame} from "../../services/games.service.js";
@@ -19,7 +20,7 @@ export const createGameSceneRun = () => {
   // todo coach это тот кто создает игру
   const echoScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
   // todo показать кнопки даты
-  echoScene.enter(ctx => ctx.reply("Введите дату", {
+  echoScene.enter(ctx => ctx.reply("Выберите число", {
      ...renderDateButtons(new Date())
     })
   );
@@ -27,7 +28,7 @@ export const createGameSceneRun = () => {
   // todo показать кнопки времени
   echoScene.action(/date_enter__(.+)/, (ctx) => {
     const dayOfDate = Number(ctx.match.at(1))
-    date = new Date(new Date().setDate(dayOfDate));
+    date = new Date(dayOfDate);
 
     ctx.reply("Выберите время", renderTimeButtons());
   });
@@ -59,16 +60,16 @@ export const createGameSceneRun = () => {
     const { first_name, last_name } = ctx.update.callback_query.from;
     coach = `${first_name} ${last_name}`
 
-    await ctx.reply(`
-      Дата: ${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}
-      Тренер: ${coach}
-      Уровень: ${level}
-      Тип: ${type}
-      Численность: ${capacity}
-    `, successCancelButtons());
+    let message = `Дата: ${date.getDate()}.${date.getMonth()} ${date.getHours()}:00\n`;
+    message =  message + `Тренер: ${coach}\n`
+    message = message + `Уровень: ${level}\n`
+    message = message + `Тип: ${type}\n`
+    message = message + `Численность: ${capacity}\n`
+
+    await ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create__'));
   });
 
-  echoScene.action("save", async ctx => {
+  echoScene.action("create__yes", async ctx => {
 
     try {
       await addGame({ date, coach, capacity, type, level, participants: [] });
@@ -80,7 +81,7 @@ export const createGameSceneRun = () => {
     ctx.scene.leave();
   });
 
-  echoScene.action("cancel", (ctx) => {
+  echoScene.action("create__no", (ctx) => {
     ctx.reply("Отменено");
     ctx.scene.leave();
   });
