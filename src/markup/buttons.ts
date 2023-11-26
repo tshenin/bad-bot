@@ -1,7 +1,10 @@
 import { Markup } from 'telegraf';
 import {GameDocument, GameLevel, GameType} from '../schemas/game.schema.js';
 
+export const adminButtons = (game: GameDocument) => ([Markup.button.callback('Удалить', `remove_game__${game.id}`)]);
+
 export const renderJoinGameButtons = (game: GameDocument) => {
+
   return {
     ...Markup.inlineKeyboard([
       Markup.button.callback('Записаться', `join__${game.id}`),
@@ -19,13 +22,28 @@ export const renderMyGameButtons = (game: GameDocument) => {
   };
 };
 
+export const renderYesNoButtons = (buttonsName: string[], key: string) => {
+  const [yes, no] = buttonsName;
+
+  return {
+    ...Markup.inlineKeyboard([
+      Markup.button.callback(yes, `${key}yes`),
+      Markup.button.callback(no, `${key}no`),
+    ]),
+  };
+};
+
 export const renderDateButtons = (currentDate: Date) => {
   const dayOfDate = currentDate.getDate();
   const dateList = [0,1,2,3,4,5,6];
 
+  const calcDay = (day: number, addedDay: number) => {
+    return new Date().setDate(day + addedDay);
+  }
+
   return {
     ...Markup.inlineKeyboard([
-      dateList.map(date => Markup.button.callback(`${date + dayOfDate}`, `date_enter__${dayOfDate + date}`))
+      dateList.map(date => Markup.button.callback(`${new Date(calcDay(dayOfDate, date)).getDate()}`, `date_enter__${calcDay(dayOfDate, date)}`))
     ])
   }
 };
@@ -64,15 +82,6 @@ export const renderCapacityButtons = () => {
   return {
     ...Markup.inlineKeyboard([
       capacityLimit.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`))
-    ])
-  }
-};
-
-export const successCancelButtons = () => {
-  return {
-    ...Markup.inlineKeyboard([
-      Markup.button.callback('Создать', 'save'),
-      Markup.button.callback('Отменить', 'cancel')
     ])
   }
 };
