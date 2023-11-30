@@ -23,17 +23,15 @@ export const createGameSceneRun = () => {
 
   // todo показать кнопки времени
   createGameScene.action(/date_enter__(.+)/, (ctx) => {
-    const dayOfDate = Number(ctx.match.at(1))
-    const date = new Date(dayOfDate);
-
-    ctx.session['myData'].date = date;
+    const day = ctx.match.at(1);
+    ctx.session['myData'].day = day;
 
     ctx.reply("Выберите время", renderTimeButtons());
   });
 
   // todo показать типы игр
   createGameScene.action(/time_enter__(.+)/, (ctx) => {
-    ctx.session['myData'].date.setHours(Number(ctx.match.at(1)));
+    ctx.session['myData'].time = ctx.match.at(1);
 
     ctx.reply("Выберите тип игры", renderGameTypeButtons());
   });
@@ -58,9 +56,9 @@ export const createGameSceneRun = () => {
     const { first_name, last_name } = ctx.update.callback_query.from;
     ctx.session['myData'].coach = `${first_name} ${last_name}`
 
-    const { date, coach, level, type, capacity } = ctx.session['myData'];
+    const { day, time, coach, level, type, capacity } = ctx.session['myData'];
 
-    let message = `Дата: ${date.getDate()}.${date.getMonth()} ${date.getHours()}:00\n`;
+    let message = `Дата: ${day} ${time}:00\n`;
     message =  message + `Тренер: ${coach}\n`
     message = message + `Уровень: ${level}\n`
     message = message + `Тип: ${type}\n`
@@ -70,12 +68,18 @@ export const createGameSceneRun = () => {
   });
 
   createGameScene.action("create__yes", async ctx => {
-    const { date, coach, level, type, capacity } = ctx.session['myData'];
+    const { day, time, coach, level, type, capacity } = ctx.session['myData'];
 
     try {
+      const [dayOfMonth, month] = day.split('.');
+      const year = new Date().getFullYear();
+      const date = new Date(new Date(year, month, dayOfMonth).setHours(time));
+
       await addGame({ date, coach, capacity, type, level, participants: [] });
+
       ctx.reply("Сохранено");
     } catch (e) {
+      console.error(e)
       ctx.reply("Что-то пошло не так, попробуйте повторить");
     }
 
