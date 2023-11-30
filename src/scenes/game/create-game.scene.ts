@@ -1,4 +1,5 @@
 import {Scenes, Telegraf} from "telegraf";
+import {format} from "date-fns";
 import {
   renderCapacityButtons,
   renderDateButtons,
@@ -59,13 +60,16 @@ export const createGameSceneRun = () => {
     const { first_name, last_name } = ctx.update.callback_query.from;
     coach = `${first_name} ${last_name}`
 
-    await ctx.reply(`
-      Дата: ${date.getDate()}.${date.getMonth()} ${date.getHours()}:${date.getMinutes()}
-      Тренер: ${coach}
-      Уровень: ${level}
-      Тип: ${type}
-      Численность: ${capacity}
-    `, successCancelButtons());
+    await ctx.reply(`Дата: <b>${format(date, 'dd.MM.yyyy k:mm')}</b>
+Тренер: <b>${coach}</b>
+Уровень: <b>${level}</b>
+Тип: <b>${type}</b>
+Участников: <b>${capacity}</b>
+    `,
+        {
+          parse_mode: 'HTML',
+          ...successCancelButtons(),
+        });
   });
 
   echoScene.action("save", async ctx => {

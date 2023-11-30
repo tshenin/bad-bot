@@ -37,8 +37,6 @@ async function dbConnection(): Promise<void> {
   await connect(`mongodb://localhost:27017/${process.env.DB_NAME}`);
 }
 
-const ADMINS = ['AlexR93', 'Annet', 'tshenin'];
-
 // set all scenes
 const stage = new Scenes.Stage<Scenes.SceneContext>([
   createGameSceneRun(),
@@ -66,7 +64,7 @@ bot.start(async (ctx) => {
   ];
 
   // if user is admin
-  if (ADMINS.includes(ctx.update.message.from.username)) {
+  if (process.env.ADMINS.includes(ctx.update.message.from.username)) {
     commands.push({
       command: 'create_game', description: 'Создать игру'
     });
