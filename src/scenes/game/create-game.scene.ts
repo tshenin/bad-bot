@@ -10,55 +10,55 @@ import {
 import {GameLevel, GameType} from "../../schemas/game.schema.js";
 import {addGame} from "../../services/games.service.js";
 
-let date: Date;
-let coach: string;
-let capacity: number;
-let type: GameType;
-let level: GameLevel;
-
 export const createGameSceneRun = () => {
   // todo coach это тот кто создает игру
-  const echoScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
+  const createGameScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
   // todo показать кнопки даты
-  echoScene.enter(ctx => ctx.reply("Выберите число", {
-     ...renderDateButtons(new Date())
-    })
-  );
+  createGameScene.enter(ctx => {
+    ctx.session['myData'] = {}
+    ctx.reply("Выберите день", {
+          ...renderDateButtons(new Date())
+        })
+  });
 
   // todo показать кнопки времени
-  echoScene.action(/date_enter__(.+)/, (ctx) => {
+  createGameScene.action(/date_enter__(.+)/, (ctx) => {
     const dayOfDate = Number(ctx.match.at(1))
-    date = new Date(dayOfDate);
+    const date = new Date(dayOfDate);
+
+    ctx.session['myData'].date = date;
 
     ctx.reply("Выберите время", renderTimeButtons());
   });
 
   // todo показать типы игр
-  echoScene.action(/time_enter__(.+)/, (ctx) => {
-    date.setHours(Number(ctx.match.at(1)));
+  createGameScene.action(/time_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].date.setHours(Number(ctx.match.at(1)));
 
     ctx.reply("Выберите тип игры", renderGameTypeButtons());
   });
 
   // todo показать кнопки уровней
-  echoScene.action(/type_enter__(.+)/, (ctx) => {
-    type = ctx.match.at(1) as GameType;
+  createGameScene.action(/type_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].type = ctx.match.at(1) as GameType;
 
     ctx.reply("Выберите уровень", renderGameLevelButtons());
   });
 
   // todo показать кнопки кол-ва мест 1-10
-  echoScene.action(/level_enter__(.+)/, (ctx) => {
-    level = ctx.match.at(1) as GameLevel;
+  createGameScene.action(/level_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].level = ctx.match.at(1) as GameLevel;
     ctx.reply("Сколько мест", renderCapacityButtons())
   });
 
   // todo показать кнопку создать и все описание тренировки
-  echoScene.action(/capacity_enter__(.+)/, async ctx => {
-    capacity = Number(ctx.match.at(1));
+  createGameScene.action(/capacity_enter__(.+)/, async ctx => {
+    ctx.session['myData'].capacity = Number(ctx.match.at(1));
 
     const { first_name, last_name } = ctx.update.callback_query.from;
-    coach = `${first_name} ${last_name}`
+    ctx.session['myData'].coach = `${first_name} ${last_name}`
+
+    const { date, coach, level, type, capacity } = ctx.session['myData'];
 
     let message = `Дата: ${date.getDate()}.${date.getMonth()} ${date.getHours()}:00\n`;
     message =  message + `Тренер: ${coach}\n`
@@ -66,10 +66,11 @@ export const createGameSceneRun = () => {
     message = message + `Тип: ${type}\n`
     message = message + `Численность: ${capacity}\n`
 
-    await ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create__'));
+    await ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create'));
   });
 
-  echoScene.action("create__yes", async ctx => {
+  createGameScene.action("create__yes", async ctx => {
+    const { date, coach, level, type, capacity } = ctx.session['myData'];
 
     try {
       await addGame({ date, coach, capacity, type, level, participants: [] });
@@ -81,12 +82,12 @@ export const createGameSceneRun = () => {
     ctx.scene.leave();
   });
 
-  echoScene.action("create__no", (ctx) => {
+  createGameScene.action("create__no", (ctx) => {
     ctx.reply("Отменено");
     ctx.scene.leave();
   });
 
-  return echoScene;
+  return createGameScene;
 }
 
 export const setCreateGameSceneListener = (bot: Telegraf<Scenes.SceneContext>) => {

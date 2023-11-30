@@ -1,7 +1,7 @@
 import { Scenes, Telegraf } from 'telegraf';
 import { getGames } from '../../services/games.service.js';
 import { renderGameMessage } from '../../markup/messages.js';
-import {adminButtons, renderJoinGameButtons} from '../../markup/buttons.js';
+import {renderAdminGameButtons, renderJoinGameButtons} from '../../markup/buttons.js';
 import {isAdmin} from "../../services/utils.js";
 
 export const showGamesSceneRun = () => {
@@ -13,10 +13,9 @@ export const showGamesSceneRun = () => {
     const games = await getGames();
     games.forEach((game) => {
       const buttons = renderJoinGameButtons(game);
-      const adminCommands = isAdmin ? adminButtons(game) : [];
 
       if (isAdmin(ctx.update['message']?.from.username)) {
-        buttons.reply_markup['inline_keyboard'].push(adminCommands);
+        buttons.reply_markup['inline_keyboard'].push(renderAdminGameButtons(game));
       }
 
       ctx.reply(renderGameMessage(game), {

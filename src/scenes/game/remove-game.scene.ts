@@ -5,28 +5,25 @@ import { renderYesNoButtons} from "../../markup/buttons.js";
 export const removeGameSceneRun = () => {
     const removeGamesScene = new Scenes.BaseScene<Scenes.SceneContext>('remove_game');
 
-    let gameId: string;
-
     removeGamesScene.enter(async (ctx) => {
-        gameId = ctx.scene.state['game'];
+        ctx.session['myData'] = { gameId: ctx.scene.state['game'] }
 
         ctx.reply('Удалить игру?', {
             parse_mode: 'HTML',
-            ...renderYesNoButtons(['Подтвердить', 'Отмена'],'remove_btn__' ),
+            ...renderYesNoButtons(['Подтвердить', 'Отмена'],'remove_game_confirmation' ),
         });
     });
 
-    removeGamesScene.action(/remove_btn__(.+)/, async (ctx) => {
+    removeGamesScene.action(/remove_game_confirmation(.+)/, async (ctx) => {
         if (ctx.match.at(1) === 'yes') {
 
             try {
-                await removeGame(gameId);
+                await removeGame(ctx.session['myData'].gameId);
                 ctx.reply('Игра удалена');
             }
             catch (e) {
                 ctx.reply('Что-то пошло не так, попробуйте позже');
             }
-
         }
 
         await ctx.answerCbQuery();
