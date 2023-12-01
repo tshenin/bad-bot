@@ -30,6 +30,11 @@ import {
   leaveGameSceneRun,
   setLeaveGameSceneListener,
 } from './scenes/game/leave-game.scene.js';
+import {isAdmin} from "./services/utils.js";
+import {
+  removeGameSceneRun,
+  setRemoveGameSceneListener
+} from "./scenes/game/remove-game.scene.js";
 
 dbConnection().catch((err) => console.log('mongoose', err));
 
@@ -45,6 +50,7 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([
   showGamesSceneRun(),
   showMyGamesSceneRun(),
   leaveGameSceneRun(),
+  removeGameSceneRun(),
 ]);
 bot.use(session());
 bot.use(stage.middleware());
@@ -56,6 +62,7 @@ setShowParticipantsSceneListener(bot);
 setShowGamesSceneListener(bot);
 setShowMyGamesSceneListener(bot);
 setLeaveGameSceneListener(bot);
+setRemoveGameSceneListener(bot);
 
 bot.start(async (ctx) => {
   const commands = [
@@ -64,7 +71,7 @@ bot.start(async (ctx) => {
   ];
 
   // if user is admin
-  if (process.env.ADMINS.includes(ctx.update.message.from.username)) {
+  if (isAdmin(ctx.update.message.from.username)) {
     commands.push({
       command: 'create_game', description: 'Создать игру'
     });

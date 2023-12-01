@@ -1,7 +1,11 @@
 import { Markup } from 'telegraf';
 import {GameDocument, GameLevel, GameType} from '../schemas/game.schema.js';
+import {add, format} from "date-fns";
+
+export const renderAdminGameButtons = (game: GameDocument) => ([Markup.button.callback('Удалить', `remove_game__${game.id}`)]);
 
 export const renderJoinGameButtons = (game: GameDocument) => {
+
   return {
     ...Markup.inlineKeyboard([
       Markup.button.callback('Записаться', `join__${game.id}`),
@@ -19,16 +23,29 @@ export const renderMyGameButtons = (game: GameDocument) => {
   };
 };
 
-export const renderDateButtons = (currentDate: Date) => {
-  const dayOfDate = currentDate.getDate();
-  const dateList = [0,1,2,3,4,5,6];
+export const renderYesNoButtons = (buttonsName: string[], key: string) => {
+  const [yes, no] = buttonsName;
 
   return {
     ...Markup.inlineKeyboard([
-      dateList.map(date => Markup.button.callback(`${date + dayOfDate}`, `date_enter__${dayOfDate + date}`))
-    ])
-  }
+      Markup.button.callback(yes, `${key}__yes`),
+      Markup.button.callback(no, `${key}__no`),
+    ]),
+  };
 };
+
+export const renderDateButtons = (startDate: Date = new Date(), days: number = 7) => {
+  const dateFormat = 'dd.MM';
+  const dateButtons = new Array(days)
+      .fill(startDate)
+      .map((startDate, index) => {
+        const date = add(startDate, { days: index });
+        const formattedDate = format(date, dateFormat);
+        return Markup.button.callback(formattedDate, `date_enter__${formattedDate}`)
+      });
+
+  return { ...Markup.inlineKeyboard(dateButtons) };
+}
 
 export const renderTimeButtons = () => {
   const timeList = ['10','11','12','18','19','20','21','22'];
@@ -64,15 +81,6 @@ export const renderCapacityButtons = () => {
   return {
     ...Markup.inlineKeyboard([
       capacityLimit.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`))
-    ])
-  }
-};
-
-export const successCancelButtons = () => {
-  return {
-    ...Markup.inlineKeyboard([
-      Markup.button.callback('Создать', 'save'),
-      Markup.button.callback('Отменить', 'cancel')
     ])
   }
 };

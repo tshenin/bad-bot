@@ -1,95 +1,97 @@
 import {Scenes, Telegraf} from "telegraf";
-import {format} from "date-fns";
 import {
   renderCapacityButtons,
   renderDateButtons,
   renderGameLevelButtons,
   renderGameTypeButtons,
-  renderTimeButtons, successCancelButtons
+  renderTimeButtons,
+  renderYesNoButtons,
 } from "../../markup/buttons.js";
 import {GameLevel, GameType} from "../../schemas/game.schema.js";
 import {addGame} from "../../services/games.service.js";
 
-let date: Date;
-let coach: string;
-let capacity: number;
-let type: GameType;
-let level: GameLevel;
-
 export const createGameSceneRun = () => {
   // todo coach это тот кто создает игру
-  const echoScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
+  const createGameScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
   // todo показать кнопки даты
-  echoScene.enter(ctx => ctx.reply("Введите дату", {
-     ...renderDateButtons(new Date())
-    })
-  );
+  createGameScene.enter(ctx => {
+    ctx.session['myData'] = {}
+    ctx.reply("Выберите день", {
+          ...renderDateButtons(new Date())
+        })
+  });
 
   // todo показать кнопки времени
-  echoScene.action(/date_enter__(.+)/, (ctx) => {
-    const dayOfDate = Number(ctx.match.at(1))
-    date = new Date(new Date().setDate(dayOfDate));
+  createGameScene.action(/date_enter__(.+)/, (ctx) => {
+    const day = ctx.match.at(1);
+    ctx.session['myData'].day = day;
 
     ctx.reply("Выберите время", renderTimeButtons());
   });
 
   // todo показать типы игр
-  echoScene.action(/time_enter__(.+)/, (ctx) => {
-    date.setHours(Number(ctx.match.at(1)));
+  createGameScene.action(/time_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].time = ctx.match.at(1);
 
     ctx.reply("Выберите тип игры", renderGameTypeButtons());
   });
 
   // todo показать кнопки уровней
-  echoScene.action(/type_enter__(.+)/, (ctx) => {
-    type = ctx.match.at(1) as GameType;
+  createGameScene.action(/type_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].type = ctx.match.at(1) as GameType;
 
     ctx.reply("Выберите уровень", renderGameLevelButtons());
   });
 
   // todo показать кнопки кол-ва мест 1-10
-  echoScene.action(/level_enter__(.+)/, (ctx) => {
-    level = ctx.match.at(1) as GameLevel;
+  createGameScene.action(/level_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].level = ctx.match.at(1) as GameLevel;
     ctx.reply("Сколько мест", renderCapacityButtons())
   });
 
   // todo показать кнопку создать и все описание тренировки
-  echoScene.action(/capacity_enter__(.+)/, async ctx => {
-    capacity = Number(ctx.match.at(1));
+  createGameScene.action(/capacity_enter__(.+)/, async ctx => {
+    ctx.session['myData'].capacity = Number(ctx.match.at(1));
 
     const { first_name, last_name } = ctx.update.callback_query.from;
-    coach = `${first_name} ${last_name}`
+    ctx.session['myData'].coach = `${first_name} ${last_name}`
 
-    await ctx.reply(`Дата: <b>${format(date, 'dd.MM.yyyy k:mm')}</b>
-Тренер: <b>${coach}</b>
-Уровень: <b>${level}</b>
-Тип: <b>${type}</b>
-Участников: <b>${capacity}</b>
-    `,
-        {
-          parse_mode: 'HTML',
-          ...successCancelButtons(),
-        });
+    const { day, time, coach, level, type, capacity } = ctx.session['myData'];
+
+    let message = `Дата: ${day} ${time}:00\n`;
+    message =  message + `Тренер: ${coach}\n`
+    message = message + `Уровень: ${level}\n`
+    message = message + `Тип: ${type}\n`
+    message = message + `Численность: ${capacity}\n`
+
+    await ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create'));
   });
 
-  echoScene.action("save", async ctx => {
+  createGameScene.action("create__yes", async ctx => {
+    const { day, time, coach, level, type, capacity } = ctx.session['myData'];
 
     try {
+      const [dayOfMonth, month] = day.split('.');
+      const year = new Date().getFullYear();
+      const date = new Date(new Date(year, month, dayOfMonth).setHours(time));
+
       await addGame({ date, coach, capacity, type, level, participants: [] });
+
       ctx.reply("Сохранено");
     } catch (e) {
+      console.error(e)
       ctx.reply("Что-то пошло не так, попробуйте повторить");
     }
 
     ctx.scene.leave();
   });
 
-  echoScene.action("cancel", (ctx) => {
+  createGameScene.action("create__no", (ctx) => {
     ctx.reply("Отменено");
     ctx.scene.leave();
   });
 
-  return echoScene;
+  return createGameScene;
 }
 
 export const setCreateGameSceneListener = (bot: Telegraf<Scenes.SceneContext>) => {
