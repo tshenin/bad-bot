@@ -11,6 +11,12 @@ export const getParticipants = async (
   return Participant.find({ game: gameId });
 };
 
+export const getParticipant = async (
+  id: string,
+): Promise<ParticipantDocument> => {
+  return Participant.findById(id);
+};
+
 export const addParticipant = async (p: IParticipant): Promise<boolean> => {
   const participant = await Participant.findOne({ tid: p.tid, game: p.game });
   if (participant) {
