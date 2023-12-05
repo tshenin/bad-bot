@@ -4,7 +4,6 @@ import { addParticipant } from '../../services/participants.service.js';
 export const joinGameSceneRun = () => {
   const joinGameScene = new Scenes.BaseScene<Scenes.SceneContext>('join_game');
 
-  // todo чекнуть про WizardScene
   joinGameScene.enter(async (ctx) => {
     const id = ctx.scene.state['game'];
     if (!ctx.from.last_name) {
@@ -18,6 +17,7 @@ export const joinGameSceneRun = () => {
         tid: ctx.from.id,
         name,
         game: id,
+        chatId: ctx.chat.id
       });
 
       if (!result) {

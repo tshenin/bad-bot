@@ -1,5 +1,7 @@
 import { Scenes, Telegraf } from 'telegraf';
-import { removeParticipant } from '../../services/participants.service.js';
+import {getParticipant, removeParticipant} from '../../services/participants.service.js';
+import {getGame} from "../../services/games.service.js";
+import {renderQueueMessage} from "../../markup/messages.js";
 
 export const leaveGameSceneRun = () => {
   const leaveGameScene = new Scenes.BaseScene<Scenes.SceneContext>(
@@ -13,8 +15,12 @@ export const leaveGameSceneRun = () => {
     await removeParticipant(userId, gameId);
 
     await ctx.reply('Готово, вы больше не участвуете.');
-    // todo отправить уведомление другому игроку
-
+    const game = await getGame(gameId);
+    if (game.participants.length >= game.capacity) {
+      const updatedParticipantId = game.participants[game.capacity - 1];
+      const updatedParticipant = await getParticipant(updatedParticipantId as string);
+      await ctx.telegram.sendMessage(updatedParticipant.chatId, renderQueueMessage(game), {parse_mode: 'HTML' })
+    }
     await ctx.answerCbQuery();
     await ctx.scene.leave();
   });
