@@ -73,7 +73,7 @@ export const createGameSceneRun = () => {
     try {
       const [dayOfMonth, month] = day.split('.');
       const year = new Date().getFullYear();
-      const date = new Date(new Date(year, month, dayOfMonth).setHours(time));
+      const date = new Date(new Date(year, month - 1, dayOfMonth).setHours(time));
 
       await addGame({ date, coach, capacity, type, level, participants: [] });
 
