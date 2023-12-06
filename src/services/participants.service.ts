@@ -7,9 +7,7 @@ import { Game } from '../schemas/game.schema.js';
 
 export const getParticipants = async (
   gameId: string,
-): Promise<ParticipantDocument[]> => {
-  return Participant.find({ game: gameId });
-};
+): Promise<ParticipantDocument[]> => Participant.find({ game: gameId });
 
 export const getParticipant = async (
   id: string,

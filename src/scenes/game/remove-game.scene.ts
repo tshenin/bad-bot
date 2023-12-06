@@ -1,6 +1,6 @@
 import {Scenes, Telegraf} from "telegraf";
-import { removeGame} from "../../services/games.service.js";
-import { renderYesNoButtons} from "../../markup/buttons.js";
+import {removeGame} from "../../services/games.service.js";
+import {renderYesNoButtons} from "../../markup/buttons.js";
 
 export const removeGameSceneRun = () => {
     const removeGamesScene = new Scenes.BaseScene<Scenes.SceneContext>('remove_game');
@@ -15,8 +15,7 @@ export const removeGameSceneRun = () => {
     });
 
     removeGamesScene.action(/remove_game_confirmation(.+)/, async (ctx) => {
-        if (ctx.match.at(1) === 'yes') {
-
+        if (ctx.match.at(1) === '__yes') {
             try {
                 await removeGame(ctx.session['myData'].gameId);
                 ctx.reply('Игра удалена');
