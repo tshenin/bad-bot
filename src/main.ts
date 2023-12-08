@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { connect } from 'mongoose';
 
 import { addGame } from './services/games.service.js';
-import {bot, runGameNotify} from './services/bot.service.js';
+import {bot, runGameNotifier} from './services/bot.service.js';
 import {
   createGameSceneRun,
   setCreateGameSceneListener,
@@ -64,9 +64,9 @@ setShowMyGamesSceneListener(bot);
 setLeaveGameSceneListener(bot);
 setRemoveGameSceneListener(bot);
 
-bot.start(async (ctx) => {
-  await runGameNotify(ctx);
+runGameNotifier();
 
+bot.start(async (ctx) => {
   const commands = [
     { command: 'show_games', description: 'Показать доступные игры' },
     { command: 'my_games', description: 'Показать мои игры' },
