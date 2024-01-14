@@ -35,7 +35,8 @@ export const renderParticipantsMessage = (
     .map((p, index) => {
       let message = index === 0 ? '<b>Участники</b>\n' : '';
       message += index === game.capacity ? '<b>В листе ожидания</b>\n' : '';
-      message += p.name;
+      message += `${p.name} - ${p.type}`;
+
       return message;
     })
     .join('\n');
