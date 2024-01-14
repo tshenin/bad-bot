@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf';
-import {GameDocument, GameLevel, GameType} from '../schemas/game.schema.js';
+import {COACHES, GameDocument, GameLevel, PLACES} from '../schemas/game.schema.js';
 import {add, format} from "date-fns";
 
 export const renderAdminGameButtons = (game: GameDocument) => ([Markup.button.callback('Удалить', `remove_game__${game.id}`)]);
@@ -46,21 +46,41 @@ export const renderDateButtons = (startDate: Date = new Date(), days: number = 7
   return { ...Markup.inlineKeyboard(dateButtons) };
 }
 
-export const renderTimeButtons = () => {
-  const timeList = ['10','11','12','17','18','19','20','21','22'];
-
+export const renderCoachButtons = () => {
   return {
     ...Markup.inlineKeyboard([
-      timeList.map(time => Markup.button.callback(time, `time_enter__${time}`))
+      COACHES.map(coach => Markup.button.callback(coach, `coach_enter__${coach}`))
     ])
   }
-};
+}
 
-export const renderGameTypeButtons = () => {
+export const renderPlaceButtons = () => {
 
   return {
     ...Markup.inlineKeyboard([
-      Object.values(GameType).map(type => Markup.button.callback(type, `type_enter__${type}`))
+      PLACES.map(place => Markup.button.callback(place, `place_enter__${place}`))
+    ])
+  }
+}
+
+export const renderDurationButtons = () => {
+  const placeList = ['1','1:30', '2'];
+
+  return {
+    ...Markup.inlineKeyboard([
+      placeList.map(durationTime => Markup.button.callback(durationTime, `duration_enter__${durationTime}`))
+    ])
+  }
+}
+
+export const renderTimeButtons = () => {
+  const timeList1 = ['17','17:30','18','18:30','19','19:30'];
+  const timeList2 = ['20','19:30','20','20:30','21','21:30','22'];
+
+  return {
+    ...Markup.inlineKeyboard([
+      timeList1.map(time => Markup.button.callback(time, `time_enter__${time}`)),
+      timeList2.map(time => Markup.button.callback(time, `time_enter__${time}`)),
     ])
   }
 };
@@ -75,11 +95,13 @@ export const renderGameLevelButtons = () => {
 };
 
 export const renderCapacityButtons = () => {
-  const capacityLimit = ['1','2','3','4','5','6','7','8'];
+  const capacityLimit1 = ['4','5','6','7','8','9','10','11'];
+  const capacityLimit2 = ['12','14','15','16','17','18','19','20'];
 
   return {
-    ...Markup.inlineKeyboard([
-      capacityLimit.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`))
+    ... Markup.inlineKeyboard([
+      capacityLimit1.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`)),
+      capacityLimit2.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`))
     ])
   }
 };

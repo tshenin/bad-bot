@@ -3,10 +3,12 @@ import { IParticipant } from './participant.schema.js';
 
 export interface IGame {
   date: Date;
-  coach?: string;
+  duration: string;
+  coach: string;
+  place: string;
   capacity: number;
-  type: GameType;
   level: GameLevel;
+  price: number;
   participants: string[] | IParticipant[];
 }
 
@@ -15,12 +17,15 @@ export enum GameType {
   game = 'Игра',
 }
 
+export const COACHES = [
+  'Акентьев Женя', 'Жадан Оксана', 'Аня Чернова'
+];
+
+export const PLACES = [
+  'Сибирь-Арена,', '1-ое Мочищенское шоссе 6', 'Вокзальная магистраль 15'
+];
+
 export enum GameLevel {
-  a = 'A',
-  b = 'B',
-  c = 'C',
-  d = 'D',
-  e = 'E',
   ab = 'A/B',
   bc = 'B/C',
   cd = 'C/D',
@@ -29,9 +34,11 @@ export enum GameLevel {
 
 const gameSchema = new Schema<IGame>({
   date: { type: Date, require: true },
-  type: { type: String, enum: GameType, require: true },
+  duration: { type: String, require: true },
   level: { type: String, enum: GameLevel, require: true },
   capacity: { type: Number, require: true },
+  price: { type: Number, require: true },
+  place: { type: String, require: true },
   participants: [{ type: Schema.Types.ObjectId, ref: 'Participant' }],
   coach: String,
 });
