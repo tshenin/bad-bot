@@ -8,7 +8,8 @@ export interface IGame {
   place: string;
   capacity: number;
   level: GameLevel;
-  price: number;
+  priceCoach: number;
+  pricePlay: number;
   participants: string[] | IParticipant[];
 }
 
@@ -37,7 +38,8 @@ const gameSchema = new Schema<IGame>({
   duration: { type: String, require: true },
   level: { type: String, enum: GameLevel, require: true },
   capacity: { type: Number, require: true },
-  price: { type: Number, require: true },
+  priceCoach: { type: Number, require: true },
+  pricePlay: { type: Number, require: true },
   place: { type: String, require: true },
   participants: [{ type: Schema.Types.ObjectId, ref: 'Participant' }],
   coach: String,
