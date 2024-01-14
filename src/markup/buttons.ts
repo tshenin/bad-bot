@@ -52,30 +52,30 @@ export const renderCoachButtons = () => {
       COACHES.map(coach => Markup.button.callback(coach, `coach_enter__${coach}`))
     ])
   }
-}
+};
 
 export const renderPlaceButtons = () => {
-
   return {
-    ...Markup.inlineKeyboard([
-      PLACES.map(place => Markup.button.callback(place, `place_enter__${place}`))
-    ])
+    ...Markup.inlineKeyboard(
+      PLACES.map(place => place.map(item => Markup.button.callback(item, `place_enter__${item}`))
+      )
+    )
   }
 }
 
 export const renderDurationButtons = () => {
-  const placeList = ['1','1:30', '2'];
+  const durationList = ['1:00','1:30', '2:00'];
 
   return {
     ...Markup.inlineKeyboard([
-      placeList.map(durationTime => Markup.button.callback(durationTime, `duration_enter__${durationTime}`))
+      durationList.map(durationTime => Markup.button.callback(durationTime, `duration_enter__${durationTime}`))
     ])
   }
-}
+};
 
 export const renderTimeButtons = () => {
-  const timeList1 = ['17','17:30','18','18:30','19','19:30'];
-  const timeList2 = ['20','19:30','20','20:30','21','21:30','22'];
+  const timeList1 = ['17:00','17:30','18:00','18:30','19:00','19:30'];
+  const timeList2 = ['20:00','20:30','21:00','21:30','22:00'];
 
   return {
     ...Markup.inlineKeyboard([
