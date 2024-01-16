@@ -1,13 +1,12 @@
 import {GameDocument} from '../schemas/game.schema.js';
 import {ParticipantDocument} from '../schemas/participant.schema.js';
-import {format } from 'date-fns';
-import {getPlusTimeDate} from "../services/utils.js";
+import {add, format} from 'date-fns';
 
 export const renderGameMessage = (game: GameDocument): string => {
   const [hours, minutes] = game.duration.split(':');
-  const finishedTime = getPlusTimeDate(game.date, hours, minutes);
+  const finishedTime = format(add(game.date, { hours: Number(hours), minutes: Number(minutes) }), 'k:mm');
 
-  let message = `Тренер: <b>${game.coach}</b> - <b>${game.pricePlay}/${game.priceCoach}</b>\n`;
+  let message = `Тренер: <b>${game.coach}</b> - <b>${game.gamePrice}/${game.trainingPrice}</b>\n`;
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b> - <b>${finishedTime}</b>\n`;
   message += `Место: <b>${game.place}</b>\n`;
   message += `Уровень: <b>${game.level}</b>\n`;

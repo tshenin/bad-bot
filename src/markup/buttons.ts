@@ -109,7 +109,7 @@ export const renderCapacityButtons = () => {
 export const renderGameTypeButtons = () => {
   return {
     ...Markup.inlineKeyboard([
-      Object.values(GameType).map(type => Markup.button.callback(type, `type_enter__${type}`))
+      Object.values(GameType).map(type => Markup.button.callback(type, `game_type_enter__${type}`))
     ])
   }
 };

@@ -8,8 +8,8 @@ export const joinGameSceneRun = () => {
   joinGameScene.enter(ctx => {
     ctx.reply('Выбирите желаемый тип события', renderGameTypeButtons());
 
-    joinGameScene.action(/type_enter__(.+)/, async(ctx) => {
-      const type = ctx.match.at(1);
+    joinGameScene.action(/game_type_enter__(.+)/, async(ctx) => {
+      const eventType = ctx.match.at(1);
       const id = ctx.scene.state['game'];
       const name = `${ctx.from.first_name} ${ctx.from.last_name || ctx.from.username}`;
 
@@ -17,7 +17,7 @@ export const joinGameSceneRun = () => {
       const result = await addParticipant({
         tid: ctx.from.id,
         name,
-        type,
+        eventType,
         game: id,
         chatId: ctx.chat.id
       });

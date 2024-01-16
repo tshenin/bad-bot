@@ -4,8 +4,8 @@ import { add, sub } from 'date-fns';
 export const GAMES: IGame[] = [
   {
     coach: 'Сашка',
-    pricePlay: 100,
-    priceCoach: 100,
+    gamePrice: 100,
+    trainingPrice: 100,
     duration: '1:00',
     place: 'корт',
     capacity: 3,
@@ -15,8 +15,8 @@ export const GAMES: IGame[] = [
   },
   {
     coach: 'Тимка',
-    pricePlay: 100,
-    priceCoach: 100,
+    gamePrice: 100,
+    trainingPrice: 100,
     duration: '1:30',
     capacity: 5,
     place: 'корт',
@@ -26,8 +26,8 @@ export const GAMES: IGame[] = [
   },
   {
     coach: 'Сашка',
-    pricePlay: 100,
-    priceCoach: 100,
+    gamePrice: 100,
+    trainingPrice: 100,
     place: 'корт',
     duration: '2:00',
     capacity: 3,
@@ -38,8 +38,8 @@ export const GAMES: IGame[] = [
   {
     coach: 'Тимка',
     capacity: 5,
-    pricePlay: 100,
-    priceCoach: 100,
+    gamePrice: 100,
+    trainingPrice: 100,
     place: 'корт',
     duration: '1:30',
     level: GameLevel.de,
