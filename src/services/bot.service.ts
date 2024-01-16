@@ -9,7 +9,7 @@ let gameNotifier;
 
 export const runGameNotifier = async () => {
   const HOUR = 3600000;
-  const HALF_HOUR = 180000;
+  const HALF_HOUR = 1800000;
 
   if (!gameNotifier) {
     try {
