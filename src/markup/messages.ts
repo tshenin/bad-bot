@@ -1,14 +1,12 @@
 import {GameDocument} from '../schemas/game.schema.js';
 import {ParticipantDocument} from '../schemas/participant.schema.js';
-import {addMinutes, format } from 'date-fns';
+import {add, format} from 'date-fns';
 
 export const renderGameMessage = (game: GameDocument): string => {
-
   const [hours, minutes] = game.duration.split(':');
-  const addedTime =  Number(hours) * 60 + (Number(minutes) || 0);
-  const finishedTime = format(addMinutes(game.date, addedTime), 'k:mm');
+  const finishedTime = format(add(game.date, { hours: Number(hours), minutes: Number(minutes) }), 'k:mm');
 
-  let message = `Тренер: <b>${game.coach}</b> - <b>${game.price}</b>\n`;
+  let message = `Тренер: <b>${game.coach}</b> - <b>${game.gamePrice}/${game.trainingPrice}</b>\n`;
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b> - <b>${finishedTime}</b>\n`;
   message += `Место: <b>${game.place}</b>\n`;
   message += `Уровень: <b>${game.level}</b>\n`;
@@ -35,7 +33,8 @@ export const renderParticipantsMessage = (
     .map((p, index) => {
       let message = index === 0 ? '<b>Участники</b>\n' : '';
       message += index === game.capacity ? '<b>В листе ожидания</b>\n' : '';
-      message += p.name;
+      message += `${p.name} - ${p.type}`;
+
       return message;
     })
     .join('\n');

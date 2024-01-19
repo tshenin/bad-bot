@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf';
-import {COACHES, GameDocument, GameLevel, PLACES} from '../schemas/game.schema.js';
+import {COACHES, GameDocument, GameLevel, GameType, PLACES} from '../schemas/game.schema.js';
 import {add, format} from "date-fns";
 
 export const renderAdminGameButtons = (game: GameDocument) => ([Markup.button.callback('Удалить', `remove_game__${game.id}`)]);
@@ -61,7 +61,7 @@ export const renderPlaceButtons = () => {
       )
     )
   }
-}
+};
 
 export const renderDurationButtons = () => {
   const durationList = ['1:00','1:30', '2:00'];
@@ -102,6 +102,14 @@ export const renderCapacityButtons = () => {
     ... Markup.inlineKeyboard([
       capacityLimit1.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`)),
       capacityLimit2.map(participants => Markup.button.callback(participants, `capacity_enter__${participants}`))
+    ])
+  }
+};
+
+export const renderGameTypeButtons = () => {
+  return {
+    ...Markup.inlineKeyboard([
+      Object.values(GameType).map(type => Markup.button.callback(type, `game_type_enter__${type}`))
     ])
   }
 };
