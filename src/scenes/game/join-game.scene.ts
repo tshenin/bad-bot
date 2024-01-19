@@ -6,7 +6,7 @@ export const joinGameSceneRun = () => {
   const joinGameScene = new Scenes.BaseScene<Scenes.SceneContext>('join_game');
 
   joinGameScene.enter(ctx => {
-    ctx.reply('Выбирите желаемый тип события', renderGameTypeButtons());
+    ctx.reply('Выберите желаемый тип события', renderGameTypeButtons());
 
     joinGameScene.action(/game_type_enter__(.+)/, async(ctx) => {
       const eventType = ctx.match.at(1);

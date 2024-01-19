@@ -5,7 +5,7 @@ const participantSchema = new Schema({
   tid: { type: Number, require: true },
   name: { type: String, require: true },
   eventType: { type: String, require: true },
-  chatId: { type: Number, require: true },
+  chatId: { type: Number, optional: true },
   game: { type: Schema.Types.ObjectId, ref: 'Game' },
 });
 

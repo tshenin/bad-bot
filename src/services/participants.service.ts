@@ -32,5 +32,9 @@ export const removeParticipant = async (
   tid: number,
   game: string,
 ): Promise<void> => {
-  await Participant.findOneAndDelete({ tid, game }).exec();
+  try {
+    await Participant.findOneAndDelete({ tid, game }).exec();
+  } catch (e) {
+    console.error('Ошибка уведомления', e);
+  }
 };

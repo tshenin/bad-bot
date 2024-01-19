@@ -1,6 +1,7 @@
 import { Markup } from 'telegraf';
 import {COACHES, GameDocument, GameLevel, GameType, PLACES} from '../schemas/game.schema.js';
 import {add, format} from "date-fns";
+import {ParticipantDocument} from "../schemas/participant.schema.js";
 
 export const renderAdminGameButtons = (game: GameDocument) => ([Markup.button.callback('Удалить', `remove_game__${game.id}`)]);
 
@@ -110,6 +111,19 @@ export const renderGameTypeButtons = () => {
   return {
     ...Markup.inlineKeyboard([
       Object.values(GameType).map(type => Markup.button.callback(type, `game_type_enter__${type}`))
+    ])
+  }
+};
+
+export const renderParticipantsButtons = (participants: ParticipantDocument[]) => {
+  const addParticipantsButtons = ['Добавить участника']
+  const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name} - ${participant.type}`,
+    `delete_participant__${participant.tid}`)])
+
+  return {
+    ...Markup.inlineKeyboard([
+      ...participantsButtons,
+      addParticipantsButtons.map(button => Markup.button.callback(button, `add_participant`)),
     ])
   }
 };
