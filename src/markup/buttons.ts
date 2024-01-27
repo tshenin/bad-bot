@@ -117,7 +117,7 @@ export const renderGameTypeButtons = () => {
 
 export const renderParticipantsButtons = (participants: ParticipantDocument[]) => {
   const addParticipantsButtons = ['Добавить участника']
-  const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name} - ${participant.type}`,
+  const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name} - ${participant.eventType}`,
     `delete_participant__${participant.tid}`)])
 
   return {

@@ -3,7 +3,10 @@ import {
   Participant,
   ParticipantDocument,
 } from '../schemas/participant.schema.js';
-import { Game } from '../schemas/game.schema.js';
+import {Game} from '../schemas/game.schema.js';
+import {getGame} from "./games.service.js";
+import {bot} from "./bot.service.js";
+import {renderQueueMessage} from "../markup/messages.js";
 
 export const getParticipants = async (
   gameId: string,
@@ -38,3 +41,17 @@ export const removeParticipant = async (
     console.error('Ошибка уведомления', e);
   }
 };
+export const removeParticipantAndCheckGame = async (participantId: number, gameId: string): Promise<void> => {
+  const game = await getGame(gameId);
+  await removeParticipant(participantId, gameId);
+
+  if (game.participants.length >= game.capacity) {
+    const updatedParticipantId = game.participants[game.capacity];
+
+    const updatedParticipant = await getParticipant(updatedParticipantId as string);
+
+    if (updatedParticipant) {
+      await bot.telegram.sendMessage(updatedParticipant.chatId, renderQueueMessage(game), {parse_mode: 'HTML' })
+    }
+  }
+}

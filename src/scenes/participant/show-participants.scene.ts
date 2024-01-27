@@ -1,6 +1,9 @@
 import { Scenes, Telegraf } from 'telegraf';
-import {addParticipant, getParticipants, removeParticipant} from '../../services/participants.service.js';
-import {renderParticipantsMessage } from '../../markup/messages.js';
+import {
+  addParticipant,
+  getParticipants, removeParticipantAndCheckGame,
+} from '../../services/participants.service.js';
+import {renderParticipantsMessage} from '../../markup/messages.js';
 import {getGame} from '../../services/games.service.js';
 import {isAdmin} from "../../services/utils.js";
 import {renderGameTypeButtons, renderParticipantsButtons, renderYesNoButtons} from "../../markup/buttons.js";
@@ -19,7 +22,7 @@ export const showParticipantsSceneRun = () => {
     ctx.session['myData'].participants = participants;
     ctx.session['myData'].game = game;
 
-    if (isAdmin(ctx.update.callback_query.from.username)) {
+    if (isAdmin(ctx.update['callback_query'].from.id)) {
       await ctx.reply('Участники', renderParticipantsButtons(participants))
     } else {
       await ctx.reply(renderParticipantsMessage(game, participants), {
@@ -38,10 +41,11 @@ export const showParticipantsSceneRun = () => {
     });
   })
 
-  showParticipantsScene.action('delete_confirm__yes', async (ctx) => {
+  showParticipantsScene.action('delete_confirm__yes', async ctx => {
     const gameId = ctx.scene.state['game'];
 
-    await removeParticipant(ctx.session['myData'].participantId , gameId);
+    await removeParticipantAndCheckGame(ctx.session['myData'].participantId, gameId);
+
     const participants = await getParticipants(gameId);
 
     if (isAdmin(ctx.update.callback_query.from.username)) {
@@ -80,10 +84,13 @@ export const showParticipantsSceneRun = () => {
         await addParticipant({
           tid,
           name: ctx.session['myData'].addedParticipant,
-          type,
+          eventType: type,
           game: ctx.scene.state['game'],
         });
-        ctx.reply('ctx.session[\'myData\'].addedParticipant добавлен');
+        ctx.reply('Добавлен');
+
+        await ctx.answerCbQuery();
+        await ctx.scene.leave();
       });
     });
   });
