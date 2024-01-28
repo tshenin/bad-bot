@@ -14,7 +14,7 @@ export const showGamesSceneRun = () => {
     games.forEach((game) => {
       const buttons = renderJoinGameButtons(game);
 
-      if (isAdmin(ctx.update['message']?.from.username)) {
+      if (isAdmin(ctx.from.id)) {
         buttons.reply_markup['inline_keyboard'].push(renderAdminGameButtons(game));
       }
 

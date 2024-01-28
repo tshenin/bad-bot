@@ -48,7 +48,7 @@ export const showParticipantsSceneRun = () => {
 
     const participants = await getParticipants(gameId);
 
-    if (isAdmin(ctx.update.callback_query.from.username)) {
+    if (isAdmin(ctx.from.id)) {
       await ctx.reply('Участники', renderParticipantsButtons(participants))
     } else {
       await ctx.reply(renderParticipantsMessage(ctx.session['myData'].game, participants), {
@@ -58,7 +58,7 @@ export const showParticipantsSceneRun = () => {
   });
 
   showParticipantsScene.action("delete_confirm__no", async (ctx) => {
-    if (isAdmin(ctx.update.callback_query.from.username)) {
+    if (isAdmin(ctx.from.id)) {
       await ctx.reply('Участники', renderParticipantsButtons(ctx.session['myData'].participants))
     } else {
       const { game, participants } = ctx.session['myData'];

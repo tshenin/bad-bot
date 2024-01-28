@@ -73,7 +73,7 @@ bot.start(async (ctx) => {
   ];
 
   // if user is admin
-  if (isAdmin(ctx.update.message.from.username)) {
+  if (isAdmin(ctx.from.id)) {
     commands.push({
       command: 'create_game', description: 'Создать игру'
     });
