@@ -37,7 +37,7 @@ export const createGameSceneRun = () => {
     const time = ctx.match.at(1);
     ctx.session['myData'].time = time;
 
-    ctx.reply("Выберите продолжительность(часы:минуты)", renderDurationButtons());
+    ctx.reply("Выберите продолжительность", renderDurationButtons());
   });
 
   // todo показать кнопки c выбором места
@@ -76,9 +76,9 @@ export const createGameSceneRun = () => {
       if (!ctx.session['myData'].gamePrice) {
         ctx.session['myData'].gamePrice =  parseInt(ctx.message['text']) || 0;
 
-        ctx.reply("Введите стоимость тренировки");
+        ctx.reply("Введите стоимость отработки");
       } else {
-        // todo показать кнопку создать и все описание тренировки
+        // todo показать кнопку создать и все описание отработки
         ctx.session['myData'].trainingPrice =  parseInt(ctx.message['text']) || 0;
         const { day, time, coach, level, duration, place, capacity, trainingPrice, gamePrice } = ctx.session['myData'];
 

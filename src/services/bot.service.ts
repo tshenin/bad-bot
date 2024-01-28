@@ -7,27 +7,25 @@ export const bot = new Telegraf<Scenes.SceneContext>(process.env.TOKEN);
 
 let gameNotifier;
 
-export const runGameNotifier = async () => {
-  const HOUR = 3600000;
-  const HALF_HOUR = 1800000;
+export const runGameNotifier = (): void => {
+  const TIME = 5400000;
+  const HALF_TIME = 2700000;
 
   if (!gameNotifier) {
     try {
       gameNotifier = setInterval(async () => {
         const games = await getGames();
 
-        games.forEach(async ({_id, date}) => {
-          if (getTime(date) < (getTime(new Date()) + HOUR)) {
-            const participant = await getParticipants(_id);
+        games.forEach(async ({id, date}) => {
+          if (getTime(date) < (getTime(new Date()) + TIME + HALF_TIME)) {
+            const participant = await getParticipants(id);
+            const dateFormated = format(date, 'dd.MM k:mm');
+            const { chatId } = participant.at(0);
 
-            const dateFormated = format(date, 'dd.MM k:mm')
-            bot.telegram.sendMessage(
-              participant.at(0).chatId,
-                `${dateFormated} начинается тренировка, удачной игры`
-            )
+            chatId && bot.telegram.sendMessage(chatId, `${dateFormated} начинается отработка, удачной игры`)
           }
         });
-        }, HALF_HOUR)
+        }, HALF_TIME)
     }
     catch (e) {
       console.error('Ошибка уведомления', e);
