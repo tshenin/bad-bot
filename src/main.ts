@@ -39,7 +39,7 @@ import {
 dbConnection().catch((err) => console.log('mongoose', err));
 
 async function dbConnection(): Promise<void> {
-  await connect(`mongodb://localhost:27017/${process.env.DB_NAME}`);
+  await connect(`mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@localhost:27017/${process.env.DB_NAME}`);
 }
 
 // set all scenes
