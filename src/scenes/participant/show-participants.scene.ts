@@ -22,7 +22,7 @@ export const showParticipantsSceneRun = () => {
     ctx.session['myData'].participants = participants;
     ctx.session['myData'].game = game;
 
-    if (isAdmin(ctx.update['callback_query'].from.id)) {
+    if (isAdmin(ctx.from.id)) {
       await ctx.reply('Участники', renderParticipantsButtons(participants))
     } else {
       await ctx.reply(renderParticipantsMessage(game, participants), {
