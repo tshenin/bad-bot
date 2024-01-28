@@ -22,7 +22,7 @@ export const runGameNotifier = (): void => {
             const dateFormated = format(date, 'dd.MM k:mm');
             const { chatId } = participant.at(0);
 
-            chatId && bot.telegram.sendMessage(chatId, `${dateFormated} начинается тренировка, удачной игры`)
+            chatId && bot.telegram.sendMessage(chatId, `${dateFormated} начинается отработка, удачной игры`)
           }
         });
         }, HALF_TIME)
