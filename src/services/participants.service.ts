@@ -45,12 +45,12 @@ export const removeParticipantAndCheckGame = async (participantId: number, gameI
   const game = await getGame(gameId);
   await removeParticipant(participantId, gameId);
 
-  if (game.participants.length >= game.capacity) {
+  if (game.participants.length > game.capacity) {
     const updatedParticipantId = game.participants[game.capacity];
 
     const updatedParticipant = await getParticipant(updatedParticipantId as string);
 
-    if (updatedParticipant) {
+    if (updatedParticipant?.chatId) {
       await bot.telegram.sendMessage(updatedParticipant.chatId, renderQueueMessage(game), {parse_mode: 'HTML' })
     }
   }
