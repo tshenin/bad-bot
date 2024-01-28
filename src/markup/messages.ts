@@ -6,10 +6,11 @@ export const renderGameMessage = (game: GameDocument): string => {
   const [hours, minutes] = game.duration.split(':');
   const finishedTime = format(add(game.date, { hours: Number(hours), minutes: Number(minutes) }), 'k:mm');
 
-  let message = `Тренер: <b>${game.coach}</b> - <b>${game.gamePrice}/${game.trainingPrice}</b>\n`;
+  let message = `Тренер: <b>${game.coach}</b>\n`;
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b> - <b>${finishedTime}</b>\n`;
   message += `Место: <b>${game.place}</b>\n`;
   message += `Уровень: <b>${game.level}</b>\n`;
+  message += `Стоимость: <b>${game.gamePrice}/${game.trainingPrice}</b>\n`;
   message += `Участников: <b>${game.participants?.length}/${game.capacity}</b>`;
   return message;
 };
