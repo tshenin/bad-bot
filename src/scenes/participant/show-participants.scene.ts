@@ -1,7 +1,8 @@
 import { Scenes, Telegraf } from 'telegraf';
 import {
   addParticipant,
-  getParticipants, removeParticipantAndCheckGame,
+  getParticipants,
+  removeParticipantAndNotifyQueue,
 } from '../../services/participants.service.js';
 import {renderParticipantsMessage} from '../../markup/messages.js';
 import {getGame} from '../../services/games.service.js';
@@ -41,10 +42,11 @@ export const showParticipantsSceneRun = () => {
     });
   })
 
+  // todo move to delete participant scene
   showParticipantsScene.action('delete_confirm__yes', async ctx => {
     const gameId = ctx.scene.state['game'];
 
-    await removeParticipantAndCheckGame(ctx.session['myData'].participantId, gameId);
+    await removeParticipantAndNotifyQueue(ctx.session['myData'].participantId, gameId);
 
     const participants = await getParticipants(gameId);
 

@@ -14,9 +14,7 @@ import {GameLevel, IGame} from "../../schemas/game.schema.js";
 import {addGame} from "../../services/games.service.js";
 
 export const createGameSceneRun = () => {
-  // todo coach это тот кто создает игру
   const createGameScene = new Scenes.BaseScene<Scenes.SceneContext>("create_game");
-  // todo показать кнопки даты
   createGameScene.enter(ctx => {
     ctx.session['myData'] = {}
     ctx.reply("Выберите день", {
@@ -24,7 +22,6 @@ export const createGameSceneRun = () => {
         })
   });
 
-  // todo показать кнопки времени
   createGameScene.action(/date_enter__(.+)/, (ctx) => {
     const day = ctx.match.at(1);
     ctx.session['myData'].day = day;
@@ -32,7 +29,6 @@ export const createGameSceneRun = () => {
     ctx.reply("Выберите время", renderTimeButtons());
   });
 
-  // todo показать кнопки продолжительности
   createGameScene.action(/time_enter__(.+)/, (ctx) => {
     const time = ctx.match.at(1);
     ctx.session['myData'].time = time;
@@ -40,7 +36,6 @@ export const createGameSceneRun = () => {
     ctx.reply("Выберите продолжительность", renderDurationButtons());
   });
 
-  // todo показать кнопки c выбором места
   createGameScene.action(/duration_enter__(.+)/, (ctx) => {
     const durationTime = ctx.match.at(1);
     ctx.session['myData'].duration = durationTime;
@@ -48,21 +43,18 @@ export const createGameSceneRun = () => {
     ctx.reply("Выберите место проведения", renderPlaceButtons());
   });
 
-  // todo показать кнопки тренеров
   createGameScene.action(/place_enter__(.+)/, (ctx) => {
     ctx.session['myData'].place = ctx.match.at(1);
 
     ctx.reply("Выберите тренера", renderCoachButtons());
   });
 
-  // todo показать кнопки скила
   createGameScene.action(/coach_enter__(.+)/, (ctx) => {
     ctx.session['myData'].coach = ctx.match.at(1);
 
     ctx.reply("Выберите уровень", renderGameLevelButtons());
   });
 
-  // todo показать кнопки кол-ва мест 1-10
   createGameScene.action(/level_enter__(.+)/, (ctx) => {
     ctx.session['myData'].level = ctx.match.at(1) as GameLevel;
     ctx.reply("Сколько мест", renderCapacityButtons())

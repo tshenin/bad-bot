@@ -1,5 +1,5 @@
 import {Scenes, Telegraf} from 'telegraf';
-import {removeParticipantAndCheckGame} from '../../services/participants.service.js';
+import {removeParticipantAndNotifyQueue} from '../../services/participants.service.js';
 
 export const leaveGameSceneRun = () => {
   const leaveGameScene = new Scenes.BaseScene<Scenes.SceneContext>(
@@ -10,7 +10,7 @@ export const leaveGameSceneRun = () => {
     const gameId = ctx.scene.state['game'];
     const userId = ctx.from.id;
     // todo не удалять на прошедшие игры
-    await removeParticipantAndCheckGame(userId, gameId);
+    await removeParticipantAndNotifyQueue(userId, gameId);
     await ctx.reply('Готово, вы больше не участвуете.');
     await ctx.answerCbQuery();
     await ctx.scene.leave();

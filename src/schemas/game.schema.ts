@@ -14,7 +14,7 @@ export interface IGame {
 }
 
 export enum GameType {
-  training = 'отработка',
+  training = 'Отработка',
   game = 'Игра',
 }
 

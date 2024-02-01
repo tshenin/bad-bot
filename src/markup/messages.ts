@@ -16,9 +16,10 @@ export const renderGameMessage = (game: GameDocument): string => {
 };
 
 export const renderQueueMessage = (game: GameDocument): string => {
-  let message = `Вы были переведены из листа ожидания в основную группу участиков.`;
+  let message = `Вы были переведены из листа ожидания в основную группу участиков.\n`;
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b>\n`;
-  message += `Участников: <b>${game.participants?.length}/${game.capacity}</b>`;
+  message += `Место: <b>${game.place}</b>\n`;
+  
   return message;
 };
 

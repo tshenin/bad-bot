@@ -41,17 +41,19 @@ export const removeParticipant = async (
     console.error('Ошибка уведомления', e);
   }
 };
-export const removeParticipantAndCheckGame = async (participantId: number, gameId: string): Promise<void> => {
-  const game = await getGame(gameId);
+
+
+export const removeParticipantAndNotifyQueue = async (participantId: number, gameId: string): Promise<void> => {
   await removeParticipant(participantId, gameId);
 
-  if (game.participants.length > game.capacity) {
-    const updatedParticipantId = game.participants[game.capacity];
+  // todo move notification part to it's own service and call separately
+  const game = await getGame(gameId);
+  if (game.participants.length >= game.capacity) {
+    const participantIdToNotify = game.participants[game.capacity - 1].toString();
+    const participantToNotify= await getParticipant(participantIdToNotify);
 
-    const updatedParticipant = await getParticipant(updatedParticipantId as string);
-
-    if (updatedParticipant?.chatId) {
-      await bot.telegram.sendMessage(updatedParticipant.chatId, renderQueueMessage(game), {parse_mode: 'HTML' })
+    if (participantToNotify?.chatId) {
+      await bot.telegram.sendMessage(participantToNotify.chatId, renderQueueMessage(game), {parse_mode: 'HTML' })
     }
   }
 }
