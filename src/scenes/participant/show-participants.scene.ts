@@ -1,9 +1,5 @@
 import { Scenes, Telegraf } from 'telegraf';
-import {
-  addParticipant,
-  getParticipants,
-  removeParticipantAndNotifyQueue,
-} from '../../services/participants.service.js';
+import { getParticipants, removeParticipantAndNotifyQueue } from '../../services/participants.service.js';
 import {renderParticipantsMessage} from '../../markup/messages.js';
 import {getGame} from '../../services/games.service.js';
 import {isAdmin} from "../../services/utils.js";
@@ -14,19 +10,15 @@ export const showParticipantsSceneRun = () => {
     'show_participants',
   );
 
-  // todo показать кнопку join game
   showParticipantsScene.enter(async (ctx) => {
-    ctx.session['myData'] = {};
-    ctx.session['printActive'] = false;
+    ctx.session['sessionData'] = {};
 
-    const id = ctx.scene.state['game'];
-    const game = await getGame(id);
-    const participants = await getParticipants(id);
-    ctx.session['myData'].participants = participants;
-    ctx.session['myData'].game = game;
+    const gameId = ctx.scene.state['game'];
+    const game = await getGame(gameId);
+    const participants = await getParticipants(gameId);
 
     if (isAdmin(ctx.from.id)) {
-      await ctx.reply('Участники', renderParticipantsButtons(participants));
+      await ctx.reply('Участники', renderParticipantsButtons(game, participants));
     } else {
       await ctx.reply(renderParticipantsMessage(game, participants), {
         parse_mode: 'HTML',
@@ -36,7 +28,7 @@ export const showParticipantsSceneRun = () => {
 
   showParticipantsScene.action(/delete_participant__(.+)/, (ctx) => {
     const participantId = ctx.match.at(1);
-    ctx.session['myData'].participantId = participantId;
+    ctx.session['sessionData'].participantId = participantId;
 
     ctx.reply('Удалить участника из тренировки?', {
       parse_mode: 'HTML',
@@ -49,60 +41,27 @@ export const showParticipantsSceneRun = () => {
     ctx.session['printActive'] = false;
     const gameId = ctx.scene.state['game'];
 
-    await removeParticipantAndNotifyQueue(ctx.session['myData'].participantId, gameId);
+    await removeParticipantAndNotifyQueue(ctx.session['sessionData'].participantId, gameId);
 
     const participants = await getParticipants(gameId);
+    const game = await getGame(gameId);
 
     if (isAdmin(ctx.from.id)) {
-      await ctx.reply('Участники', renderParticipantsButtons(participants))
+      await ctx.reply('Участники', renderParticipantsButtons(game, participants))
     } else {
-      await ctx.reply(renderParticipantsMessage(ctx.session['myData'].game, participants), {
+      await ctx.reply(renderParticipantsMessage(ctx.session['sessionData'].game, participants), {
         parse_mode: 'HTML',
       });
     }
   });
 
   showParticipantsScene.action('delete_confirm__no', async (ctx) => {
-    ctx.session['printActive'] = false;
-
     if (isAdmin(ctx.from.id)) {
-      await ctx.reply('Участники', renderParticipantsButtons(ctx.session['myData'].participants))
-    } else {
-      const { game, participants } = ctx.session['myData'];
+      const gameId = ctx.scene.state['game'];
+      const game = await getGame(gameId);
+      const participants = await getParticipants(gameId);
 
-      await ctx.reply(renderParticipantsMessage(game, participants), {
-        parse_mode: 'HTML',
-      });
-    }
-  });
-
-  // todo move adding participant to its own scene
-  showParticipantsScene.action(/add_participant/, async (ctx) => {
-    const sceneContext = ctx;
-    sceneContext.session['typingNameInProgress'] = true;
-
-    sceneContext.reply('Введите имя и фамилию игрока');
-    await ctx.answerCbQuery();
-  });
-
-  showParticipantsScene.on('message', async ctx => {
-    if (ctx.session['typingNameInProgress']) {
-      ctx.session['myData'].addedParticipant = ctx.message['text'];
-
-      const tid = Date.now();
-
-      await addParticipant({
-        tid,
-        name: ctx.session['myData'].addedParticipant,
-        game: ctx.scene.state['game'],
-      });
-      ctx.reply('Добавлен');
-      ctx.session['typingNameInProgress'] = false;
-
-      await ctx.scene.leave();
-    }
-    else {
-      await ctx.scene.leave();
+      await ctx.reply('Участники', renderParticipantsButtons(game, participants))
     }
   });
 
