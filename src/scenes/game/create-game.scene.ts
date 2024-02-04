@@ -72,12 +72,13 @@ export const createGameSceneRun = () => {
     ctx.reply("Введите стоимость игры");
     createGameScene.on("message", ctx => {
       ctx.session['myData'].price = parseInt(ctx.message['text']) || 0;
-      const {day, time, coach, level, duration, place, capacity, price} = ctx.session['myData'];
+      const {day, time, coach, level, duration, place, type, capacity, price} = ctx.session['myData'];
 
       let message = `Дата: ${day} ${time}\n`;
       message = message + `Продолжительность: ${duration}\n`
       message = message + `Место: ${place}\n`
       message = message + `Тренер: ${coach}\n`
+      message = message + `Тип: ${type}\n`
       message = message + `Уровень: ${level}\n`
       message = message + `Численность: ${capacity}\n`
       message = message + `Стоимость: ${price}\n`
