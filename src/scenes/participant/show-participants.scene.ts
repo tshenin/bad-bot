@@ -6,7 +6,7 @@ import {
 import {renderParticipantsMessage} from '../../markup/messages.js';
 import {getGame} from '../../services/games.service.js';
 import {isAdmin} from "../../services/utils.js";
-import {renderGameTypeButtons, renderParticipantsButtons, renderYesNoButtons} from "../../markup/buttons.js";
+import {renderParticipantsButtons, renderYesNoButtons} from "../../markup/buttons.js";
 
 export const showParticipantsSceneRun = () => {
   const showParticipantsScene = new Scenes.BaseScene<Scenes.SceneContext>(
@@ -15,7 +15,9 @@ export const showParticipantsSceneRun = () => {
 
   // todo показать кнопку join game
   showParticipantsScene.enter(async (ctx) => {
-    ctx.session['myData'] = {}
+    ctx.session['myData'] = {};
+    ctx.session['printActive'] = false;
+
     const id = ctx.scene.state['game'];
     const game = await getGame(id);
     const participants = await getParticipants(id);
@@ -23,7 +25,7 @@ export const showParticipantsSceneRun = () => {
     ctx.session['myData'].game = game;
 
     if (isAdmin(ctx.from.id)) {
-      await ctx.reply('Участники', renderParticipantsButtons(participants))
+      await ctx.reply('Участники', renderParticipantsButtons(participants));
     } else {
       await ctx.reply(renderParticipantsMessage(game, participants), {
         parse_mode: 'HTML',
@@ -42,6 +44,7 @@ export const showParticipantsSceneRun = () => {
   })
 
   showParticipantsScene.action('delete_confirm__yes', async ctx => {
+    ctx.session['printActive'] = false;
     const gameId = ctx.scene.state['game'];
 
     await removeParticipantAndCheckGame(ctx.session['myData'].participantId, gameId);
@@ -57,7 +60,9 @@ export const showParticipantsSceneRun = () => {
     }
   });
 
-  showParticipantsScene.action("delete_confirm__no", async (ctx) => {
+  showParticipantsScene.action('delete_confirm__no', async (ctx) => {
+    ctx.session['printActive'] = false;
+
     if (isAdmin(ctx.from.id)) {
       await ctx.reply('Участники', renderParticipantsButtons(ctx.session['myData'].participants))
     } else {
@@ -70,28 +75,29 @@ export const showParticipantsSceneRun = () => {
   });
 
   showParticipantsScene.action(/add_participant/, (ctx) => {
-    ctx.reply("Введите имя и фамилию игрока");
+    ctx.session['printActive'] = true;
 
-    showParticipantsScene.on("message", ctx => {
-      ctx.session['myData'].addedParticipant = ctx.message['text'];
+    ctx.reply('Введите имя и фамилию игрока');
 
-      ctx.reply('Выберите желаемый тип события', renderGameTypeButtons());
+    showParticipantsScene.on('message', async ctx => {
+      if (ctx.session['printActive']) {
+        ctx.session['myData'].addedParticipant = ctx.message['text'];
 
-      showParticipantsScene.action(/type_enter__(.+)/, async(ctx) => {
-        const type = ctx.match.at(1);
         const tid = Date.now();
 
         await addParticipant({
           tid,
           name: ctx.session['myData'].addedParticipant,
-          eventType: type,
           game: ctx.scene.state['game'],
         });
         ctx.reply('Добавлен');
 
         await ctx.answerCbQuery();
         await ctx.scene.leave();
-      });
+      }
+      else {
+        await ctx.scene.leave();
+      }
     });
   });
 

@@ -6,20 +6,21 @@ export interface IGame {
   duration: string;
   coach: string;
   place: string;
+  type: GameType;
   capacity: number;
   level: GameLevel;
-  trainingPrice: number;
-  gamePrice: number;
+  price: number;
   participants: string[] | IParticipant[];
 }
 
 export enum GameType {
-  training = 'отработка',
+  training = 'Отработка',
   game = 'Игра',
 }
 
 export const COACHES = [
-  'Акентьев Женя', 'Жадан Оксана', 'Аня Чернова'
+  ['Акентьев Женя', 'Жадан Оксана'],
+  ['Чернова Анна', 'Без тренера']
 ];
 
 export const PLACES = [
@@ -38,8 +39,8 @@ const gameSchema = new Schema<IGame>({
   duration: { type: String, require: true },
   level: { type: String, enum: GameLevel, require: true },
   capacity: { type: Number, require: true },
-  trainingPrice: { type: Number, require: true },
-  gamePrice: { type: Number, require: true },
+  type: { type: String, enum: GameType, require: true },
+  price: { type: Number, require: true },
   place: { type: String, require: true },
   participants: [{ type: Schema.Types.ObjectId, ref: 'Participant' }],
   coach: String,

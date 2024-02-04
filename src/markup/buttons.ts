@@ -49,9 +49,9 @@ export const renderDateButtons = (startDate: Date = new Date(), days: number = 7
 
 export const renderCoachButtons = () => {
   return {
-    ...Markup.inlineKeyboard([
-      COACHES.map(coach => Markup.button.callback(coach, `coach_enter__${coach}`))
-    ])
+    ...Markup.inlineKeyboard(
+      COACHES.map(coachesList => coachesList.map(coach => Markup.button.callback(coach, `coach_enter__${coach}`)))
+    )
   }
 };
 
@@ -117,7 +117,7 @@ export const renderGameTypeButtons = () => {
 
 export const renderParticipantsButtons = (participants: ParticipantDocument[]) => {
   const addParticipantsButtons = ['Добавить участника']
-  const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name} - ${participant.eventType}`,
+  const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name}`,
     `delete_participant__${participant.tid}`)])
 
   return {

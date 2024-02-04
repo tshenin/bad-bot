@@ -10,7 +10,7 @@ export const renderGameMessage = (game: GameDocument): string => {
   message += `Дата: <b>${format(game.date, 'dd.MM.yyyy k:mm')}</b> - <b>${finishedTime}</b>\n`;
   message += `Место: <b>${game.place}</b>\n`;
   message += `Уровень: <b>${game.level}</b>\n`;
-  message += `Стоимость: <b>${game.gamePrice}/${game.trainingPrice}</b>\n`;
+  message += `Стоимость: <b>${game.price}</b>\n`;
   message += `Участников: <b>${game.participants?.length}/${game.capacity}</b>`;
   return message;
 };
@@ -34,7 +34,7 @@ export const renderParticipantsMessage = (
     .map((p, index) => {
       let message = index === 0 ? '<b>Участники</b>\n' : '';
       message += index === game.capacity ? '<b>В листе ожидания</b>\n' : '';
-      message += `${p.name} - ${p.eventType}`;
+      message += `${p.name}`;
 
       return message;
     })
