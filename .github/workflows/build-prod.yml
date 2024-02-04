@@ -17,5 +17,6 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd spiel-mit-bot
+            git pull
             yarn build
             pm2 restart main
