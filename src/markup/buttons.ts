@@ -118,7 +118,7 @@ export const renderGameTypeButtons = () => {
 export const renderParticipantsButtons = (game: GameDocument, participants: ParticipantDocument[]) => {
   const addParticipantsButtons = ['Добавить участника'];
   const participantsButtons = participants.map(participant => [Markup.button.callback(`X - ${participant.name}`,
-    `delete_participant__${participant.tid}`)])
+    `delete_participant__${game.id}__${participant.tid}`)])
 
   return {
     ...Markup.inlineKeyboard([
