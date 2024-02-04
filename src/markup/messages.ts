@@ -11,6 +11,7 @@ export const renderGameMessage = (game: GameDocument): string => {
   message += `Место: <b>${game.place}</b>\n`;
   message += `Уровень: <b>${game.level}</b>\n`;
   message += `Стоимость: <b>${game.price}</b>\n`;
+  message += `Тип: <b>${game.type}</b>\n`;
   message += `Участников: <b>${game.participants?.length}/${game.capacity}</b>`;
   return message;
 };
