@@ -76,31 +76,34 @@ export const showParticipantsSceneRun = () => {
     }
   });
 
-  showParticipantsScene.action(/add_participant/, (ctx) => {
-    ctx.session['printActive'] = true;
+  // todo move adding participant to its own scene
+  showParticipantsScene.action(/add_participant/, async (ctx) => {
+    const sceneContext = ctx;
+    sceneContext.session['typingNameInProgress'] = true;
 
-    ctx.reply('Введите имя и фамилию игрока');
+    sceneContext.reply('Введите имя и фамилию игрока');
+    await ctx.answerCbQuery();
+  });
 
-    showParticipantsScene.on('message', async ctx => {
-      if (ctx.session['printActive']) {
-        ctx.session['myData'].addedParticipant = ctx.message['text'];
+  showParticipantsScene.on('message', async ctx => {
+    if (ctx.session['typingNameInProgress']) {
+      ctx.session['myData'].addedParticipant = ctx.message['text'];
 
-        const tid = Date.now();
+      const tid = Date.now();
 
-        await addParticipant({
-          tid,
-          name: ctx.session['myData'].addedParticipant,
-          game: ctx.scene.state['game'],
-        });
-        ctx.reply('Добавлен');
+      await addParticipant({
+        tid,
+        name: ctx.session['myData'].addedParticipant,
+        game: ctx.scene.state['game'],
+      });
+      ctx.reply('Добавлен');
+      ctx.session['typingNameInProgress'] = false;
 
-        await ctx.answerCbQuery();
-        await ctx.scene.leave();
-      }
-      else {
-        await ctx.scene.leave();
-      }
-    });
+      await ctx.scene.leave();
+    }
+    else {
+      await ctx.scene.leave();
+    }
   });
 
   return showParticipantsScene;
