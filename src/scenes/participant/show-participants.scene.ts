@@ -38,7 +38,7 @@ export const showParticipantsSceneRun = () => {
     const participantId = ctx.match.at(1);
     ctx.session['myData'].participantId = participantId;
 
-    ctx.reply('Удалить участника из игры?', {
+    ctx.reply('Удалить участника из тренировки?', {
       parse_mode: 'HTML',
       ...renderYesNoButtons(['Подтвердить', 'Отмена'], 'delete_confirm'),
     });

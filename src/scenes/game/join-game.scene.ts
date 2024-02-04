@@ -18,7 +18,7 @@ export const joinGameSceneRun = () => {
     });
 
     if (!result) {
-      await ctx.reply('Вы уже записаны на эту игру');
+      await ctx.reply('Вы уже записаны на эту тренировку');
       await ctx.answerCbQuery();
       await ctx.scene.leave();
       return;
