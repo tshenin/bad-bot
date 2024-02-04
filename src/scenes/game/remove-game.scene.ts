@@ -18,7 +18,7 @@ export const removeGameSceneRun = () => {
         if (ctx.match.at(1) === '__yes') {
             try {
                 await removeGame(ctx.session['myData'].gameId);
-                ctx.reply('Игра удалена');
+                ctx.reply('Тренировка удалена');
             }
             catch (e) {
                 ctx.reply('Что-то пошло не так, попробуйте позже');

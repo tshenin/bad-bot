@@ -46,10 +46,9 @@ export const createGameSceneRun = () => {
   createGameScene.action(/place_enter__(.+)/, (ctx) => {
     ctx.session['myData'].place = ctx.match.at(1);
 
-    ctx.reply("Выберите тип игры", renderGameTypeButtons());
+    ctx.reply("Выберите тип тренировки", renderGameTypeButtons());
   });
 
-  // todo показать кнопки тренеров
   createGameScene.action(/type_enter__(.+)/, (ctx) => {
     ctx.session['myData'].type = ctx.match.at(1);
 
@@ -69,7 +68,7 @@ export const createGameSceneRun = () => {
 
   createGameScene.action(/capacity_enter__(.+)/, async ctx => {
     ctx.session['myData'].capacity = Number(ctx.match.at(1));
-    ctx.reply("Введите стоимость игры");
+    ctx.reply("Введите стоимость тренировки");
     createGameScene.on("message", ctx => {
       ctx.session['myData'].price = parseInt(ctx.message['text']) || 0;
       const {day, time, coach, level, duration, place, type, capacity, price} = ctx.session['myData'];
