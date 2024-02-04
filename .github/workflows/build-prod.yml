@@ -1,7 +1,7 @@
 name: Build Prod
 on:
   push:
-    branches: [ci-test]
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,4 +15,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          script: whoami
+          script: |
+            cd spiel-mit-bot
+            yarn build
+            pm2 restart main
