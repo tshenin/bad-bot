@@ -7,7 +7,7 @@ import {
   createGameSceneRun,
   setCreateGameSceneListener,
 } from './scenes/game/create-game.scene.js';
-import { Scenes, session } from 'telegraf';
+import {Scenes, session} from 'telegraf';
 import {
   joinGameSceneRun,
   setJoinGameSceneListener,

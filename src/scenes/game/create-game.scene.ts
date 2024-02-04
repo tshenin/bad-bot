@@ -6,11 +6,11 @@ import {
   renderDateButtons,
   renderDurationButtons,
   renderGameLevelButtons,
+  renderGameTypeButtons,
   renderPlaceButtons,
-  renderTimeButtons,
-  renderYesNoButtons,
+  renderTimeButtons, renderYesNoButtons,
 } from "../../markup/buttons.js";
-import {GameLevel, IGame} from "../../schemas/game.schema.js";
+import {GameLevel} from "../../schemas/game.schema.js";
 import {addGame} from "../../services/games.service.js";
 
 export const createGameSceneRun = () => {
@@ -46,6 +46,13 @@ export const createGameSceneRun = () => {
   createGameScene.action(/place_enter__(.+)/, (ctx) => {
     ctx.session['myData'].place = ctx.match.at(1);
 
+    ctx.reply("Выберите тип игры", renderGameTypeButtons());
+  });
+
+  // todo показать кнопки тренеров
+  createGameScene.action(/type_enter__(.+)/, (ctx) => {
+    ctx.session['myData'].type = ctx.match.at(1);
+
     ctx.reply("Выберите тренера", renderCoachButtons());
   });
 
@@ -63,32 +70,25 @@ export const createGameSceneRun = () => {
   createGameScene.action(/capacity_enter__(.+)/, async ctx => {
     ctx.session['myData'].capacity = Number(ctx.match.at(1));
     ctx.reply("Введите стоимость игры");
-
     createGameScene.on("message", ctx => {
-      if (!ctx.session['myData'].gamePrice) {
-        ctx.session['myData'].gamePrice =  parseInt(ctx.message['text']) || 0;
+      ctx.session['myData'].price = parseInt(ctx.message['text']) || 0;
+      const {day, time, coach, level, duration, place, type, capacity, price} = ctx.session['myData'];
 
-        ctx.reply("Введите стоимость отработки");
-      } else {
-        // todo показать кнопку создать и все описание отработки
-        ctx.session['myData'].trainingPrice =  parseInt(ctx.message['text']) || 0;
-        const { day, time, coach, level, duration, place, capacity, trainingPrice, gamePrice } = ctx.session['myData'];
+      let message = `Дата: ${day} ${time}\n`;
+      message = message + `Продолжительность: ${duration}\n`
+      message = message + `Место: ${place}\n`
+      message = message + `Тренер: ${coach}\n`
+      message = message + `Тип: ${type}\n`
+      message = message + `Уровень: ${level}\n`
+      message = message + `Численность: ${capacity}\n`
+      message = message + `Стоимость: ${price}\n`
 
-        let message = `Дата: ${day} ${time}\n`;
-        message = message + `Продолжительность: ${duration}\n`
-        message = message + `Место: ${place}\n`
-        message = message + `Тренер: ${coach}\n`
-        message = message + `Уровень: ${level}\n`
-        message = message + `Численность: ${capacity}\n`
-        message = message + `Стоимость: ${gamePrice}/${trainingPrice}\n`
-
-        ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create'));
-      }
+      ctx.reply(message, renderYesNoButtons(['Создать', 'Отменить'], 'create'));
     });
   });
 
   createGameScene.action("create__yes", async ctx => {
-    const { day, time, duration, place, coach, level, capacity, trainingPrice, gamePrice } = ctx.session['myData'];
+    const { day, time, duration, place, coach, type, level, capacity, price } = ctx.session['myData'];
 
     const [hours, minutes] = time.split(':');
     try {
@@ -96,8 +96,7 @@ export const createGameSceneRun = () => {
       const year = getYear(new Date());
       const date = setMinutes(new Date(year, month - 1, dayOfMonth, hours), minutes);
 
-      // todo: типизровать
-      await addGame({ date, coach, capacity, duration, place, level, trainingPrice, gamePrice, participants: [] } as IGame);
+      await addGame({ date, coach, capacity, duration, place, type, level, price, participants: [] });
 
       ctx.reply("Сохранено");
     } catch (e) {
