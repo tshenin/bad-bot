@@ -75,8 +75,8 @@ export const renderDurationButtons = () => {
 };
 
 export const renderTimeButtons = () => {
-  const timeList1 = ['17:00','17:30','18:00','18:30','19:00','19:30'];
-  const timeList2 = ['20:00','20:30','21:00','21:30','22:00'];
+  const timeList1 = ['10:30','17:00','17:30','18:00','18:30','19:00'];
+  const timeList2 = ['19:30','20:00','20:30','21:00','21:30','22:00'];
 
   return {
     ...Markup.inlineKeyboard([
