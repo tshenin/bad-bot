@@ -35,6 +35,8 @@ import {
   removeGameSceneRun,
   setRemoveGameSceneListener
 } from "./scenes/game/remove-game.scene.js";
+import { addParticipantSceneRun, setAddParticipantSceneListener } from './scenes/participant/add-participant.scene.js';
+import { deleteParticipantSceneRun, setDeleteParticipantSceneListener } from './scenes/participant/delete-participant.scene.js';
 
 dbConnection().catch((err) => console.log('mongoose', err));
 
@@ -51,6 +53,8 @@ const stage = new Scenes.Stage<Scenes.SceneContext>([
   showMyGamesSceneRun(),
   leaveGameSceneRun(),
   removeGameSceneRun(),
+  addParticipantSceneRun(),
+  deleteParticipantSceneRun()
 ]);
 bot.use(session());
 bot.use(stage.middleware());
@@ -63,6 +67,8 @@ setShowGamesSceneListener(bot);
 setShowMyGamesSceneListener(bot);
 setLeaveGameSceneListener(bot);
 setRemoveGameSceneListener(bot);
+setAddParticipantSceneListener(bot);
+setDeleteParticipantSceneListener(bot);
 
 runGameNotifier();
 
