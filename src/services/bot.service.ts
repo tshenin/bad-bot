@@ -3,6 +3,9 @@ import {getGames} from "./games.service.js";
 import {getParticipants} from "./participants.service.js";
 import {format, getTime} from "date-fns";
 
+import 'dotenv/config';
+
+
 export const bot = new Telegraf<Scenes.SceneContext>(process.env.TOKEN);
 
 let gameNotifier;

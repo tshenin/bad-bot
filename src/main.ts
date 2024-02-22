@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { connect } from 'mongoose';
 
 import { addGame } from './services/games.service.js';
@@ -37,6 +36,9 @@ import {
 } from "./scenes/game/remove-game.scene.js";
 import { addParticipantSceneRun, setAddParticipantSceneListener } from './scenes/participant/add-participant.scene.js';
 import { deleteParticipantSceneRun, setDeleteParticipantSceneListener } from './scenes/participant/delete-participant.scene.js';
+
+import 'dotenv/config';
+
 
 dbConnection().catch((err) => console.log('mongoose', err));
 

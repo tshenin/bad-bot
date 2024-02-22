@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 export const isAdmin = (id) => {
     try {
         const admins: string[] = JSON.parse(process.env.ADMINS);
