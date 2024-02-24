@@ -1,5 +1,4 @@
 import { connect } from 'mongoose';
-
 import { addGame } from './services/games.service.js';
 import {bot, runGameNotifier} from './services/bot.service.js';
 import {
@@ -37,7 +36,9 @@ import {
 import { addParticipantSceneRun, setAddParticipantSceneListener } from './scenes/participant/add-participant.scene.js';
 import { deleteParticipantSceneRun, setDeleteParticipantSceneListener } from './scenes/participant/delete-participant.scene.js';
 
-import 'dotenv/config';
+import * as dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({path: path.resolve('./', '.env')});
 
 
 dbConnection().catch((err) => console.log('mongoose', err));

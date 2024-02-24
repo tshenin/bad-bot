@@ -1,4 +1,4 @@
-import { Markup } from 'telegraf';
+import {Markup} from 'telegraf';
 import {COACHES, GameDocument, GameLevel, GameType, PLACES} from '../schemas/game.schema.js';
 import {add, format} from "date-fns";
 import {ParticipantDocument} from "../schemas/participant.schema.js";

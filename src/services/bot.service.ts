@@ -3,8 +3,9 @@ import {getGames} from "./games.service.js";
 import {getParticipants} from "./participants.service.js";
 import {format, getTime} from "date-fns";
 
-import 'dotenv/config';
-
+import * as dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({path: path.resolve('./', '.env')});
 
 export const bot = new Telegraf<Scenes.SceneContext>(process.env.TOKEN);
 
