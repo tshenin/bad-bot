@@ -18,7 +18,7 @@ export const createGameSceneRun = () => {
   createGameScene.enter(ctx => {
     ctx.session['myData'] = {}
     ctx.reply("Выберите день", {
-          ...renderDateButtons(new Date())
+          ...renderDateButtons(new Date(), 28)
         })
   });
 
