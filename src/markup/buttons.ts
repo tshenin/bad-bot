@@ -44,7 +44,7 @@ export const renderDateButtons = (startDate: Date = new Date(), days: number = 7
         return Markup.button.callback(formattedDate, `date_enter__${formattedDate}`)
       });
 
-  return { ...Markup.inlineKeyboard(dateButtons) };
+  return {...Markup.inlineKeyboard(sliceIntoChunks(dateButtons, 7))};
 }
 
 export const renderCoachButtons = () => {
@@ -127,3 +127,13 @@ export const renderParticipantsButtons = (game: GameDocument, participants: Part
     ])
   }
 };
+
+function sliceIntoChunks(arr, chunkSize) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+      const chunk = arr.slice(i, i + chunkSize);
+      res.push(chunk);
+  }
+  
+  return res;
+}
