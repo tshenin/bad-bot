@@ -16,12 +16,12 @@ export const showMyGamesSceneRun = () => {
       return;
     }
 
-    games.forEach((game) => {
-      ctx.reply(renderGameMessage(game), {
+    for (const game of games) {
+     await ctx.reply(renderGameMessage(game), {
         parse_mode: 'HTML',
         ...renderMyGameButtons(game),
       });
-    });
+    }
     showMyGamesScene.leave();
   });
 

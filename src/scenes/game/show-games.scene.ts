@@ -11,18 +11,20 @@ export const showGamesSceneRun = () => {
 
   showGamesScene.enter(async (ctx) => {
     const games = await getGames();
-    games.forEach((game) => {
+
+    for (const game of games) {
       const buttons = renderJoinGameButtons(game);
 
       if (isAdmin(ctx.from.id)) {
         buttons.reply_markup['inline_keyboard'].push(renderAdminGameButtons(game));
       }
 
-      ctx.reply(renderGameMessage(game), {
+      await ctx.reply(renderGameMessage(game), {
         parse_mode: 'HTML',
         ...buttons,
       });
-    });
+    }
+
     showGamesScene.leave();
   });
 
